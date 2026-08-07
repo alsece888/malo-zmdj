@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>正面对决大本营 · 赛事活动信息社区</title>
+<!-- busuanzi PV/UV counter -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Cloudflare Web Analytics -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "f4f8bb9091bb4c26b0243c4cc6ff582a"}'></script>
+<script src="data.js"></script>
+<script src="cards_data.js"></script>
+<script src="decks_data.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f8f9fc;
+  --bg-2: #f1f3f9;
+  --card: #ffffff;
+  --text: #1a1d29;
+  --text-2: #5c6378;
+  --text-3: #9aa3b8;
+  --border: #e8ebf2;
+  --border-2: #d5dae6;
+  --primary: #6366f1;
+  --primary-d: #5457e5;
+  --primary-l: #eef0ff;
+  --primary-ll: #f5f6ff;
+  --blue: #3b82f6;
+  --blue-l: #eff6ff;
+  --green: #10b981;
+  --green-l: #ecfdf5;
+  --orange: #f59e0b;
+  --orange-l: #fffbeb;
+  --red: #ef4444;
+  --purple: #a855f7;
+  --purple-l: #faf5ff;
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-xs: 0 1px 2px rgba(30,41,59,0.04);
+  --shadow-sm: 0 1px 3px rgba(30,41,59,0.06), 0 1px 2px rgba(30,41,59,0.04);
+  --shadow: 0 4px 12px rgba(30,41,59,0.06), 0 1px 3px rgba(30,41,59,0.04);
+  --shadow-lg: 0 12px 32px rgba(30,41,59,0.08), 0 4px 8px rgba(30,41,59,0.04);
+  --shadow-xl: 0 20px 48px rgba(30,41,59,0.12), 0 8px 16px rgba(30,41,59,0.06);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* ===== NAV ===== */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1240px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; height: 64px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 17px; font-weight: 700; color: var(--text);
+  cursor: pointer; letter-spacing: -0.3px;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.nav-tabs {
+  display: flex; gap: 2px;
+  background: var(--bg-2);
+  padding: 4px; border-radius: 12px;
+}
+.nav-tab {
+  padding: 7px 18px; border-radius: 8px;
+  font-size: 13.5px; font-weight: 600; color: var(--text-2);
+  cursor: pointer; transition: var(--transition);
+  border: none; background: transparent;
+  letter-spacing: -0.1px;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active {
+  background: var(--card); color: var(--text);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ===== LAYOUT ===== */
+.container { max-width: 1240px; margin: 0 auto; padding: 28px; }
+.page { display: none; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+  font-size: 22px; font-weight: 700; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+  letter-spacing: -0.5px;
+}
+.section-title .badge {
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  background: var(--primary-l); padding: 3px 12px; border-radius: 20px;
+}
+
+/* ===== TOOLBAR (shared) ===== */
+.events-toolbar, .cards-toolbar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  box-shadow: var(--shadow-xs);
+}
+.toolbar-group { display: flex; gap: 3px; }
+.type-btn, .card-type-btn {
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--text-2); cursor: pointer; transition: var(--transition);
+}
+.type-btn:hover, .card-type-btn:hover { background: var(--bg); color: var(--text); }
+.type-btn.active, .card-type-btn.active {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+}
+
+.select-input, .search-input {
+  padding: 8px 14px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); font-size: 13px; font-weight: 500;
+  outline: none; transition: var(--transition);
+}
+.select-input:hover, .search-input:hover { border-color: var(--border-2); }
+.select-input:focus, .search-input:focus {
+  border-color: var(--primary); background: var(--card);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+}
+.search-input { min-width: 220px; }
+.search-input::placeholder { color: var(--text-3); }
+
+.toolbar-spacer { flex: 1; }
+.toolbar-divider { width: 1px; height: 28px; background: var(--border); margin: 0 2px; }
+.toolbar-count {
+  font-size: 13px; color: var(--text-2); font-weight: 500;
+  background: var(--bg); padding: 5px 12px; border-radius: 8px;
+}
+
+/* Attribute filter buttons */
+.attr-btn {
+  padding: 6px 12px; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--text-2); cursor: pointer; transition: var(--transition);
+  min-width: 36px; text-align: center;
+}
+.attr-btn:hover { background: var(--bg); color: var(--text); }
+.attr-btn.active {
+  color: #fff; border-color: transparent;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.attr-btn[data-attr="风"].active { background: #4ade80; }
+.attr-btn[data-attr="林"].active { background: #22c55e; }
+.attr-btn[data-attr="火"].active { background: #f97316; }
+.attr-btn[data-attr="山"].active { background: #a16207; }
+.attr-btn[data-attr="阴"].active { background: #8b5cf6; }
+.attr-btn[data-attr="雷"].active { background: #eab308; }
+.attr-btn[data-attr="all"].active { background: var(--primary); }
+
+/* ===== TABLE ===== */
+.table-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--bg-2); border-bottom: 1px solid var(--border); }
+th {
+  padding: 12px 14px; text-align: left;
+  font-size: 11.5px; font-weight: 700; color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.6px;
+  white-space: nowrap; cursor: pointer; user-select: none;
+  transition: color var(--transition);
+}
+th:hover { color: var(--text); }
+th.sorted { color: var(--primary); }
+th .sort-arrow { font-size: 10px; margin-left: 3px; }
+td {
+  padding: 12px 14px; font-size: 13.5px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+tbody tr { transition: background 0.12s; cursor: pointer; }
+tbody tr:hover { background: var(--primary-ll); }
+tbody tr:last-child td { border-bottom: none; }
+
+.event-name { font-weight: 600; color: var(--text); }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 6px; white-space: nowrap;
+}
+.tag-construct { background: var(--blue-l); color: #1e40af; }
+.tag-sealed { background: var(--green-l); color: #047857; }
+.tag-free { background: var(--green-l); color: #047857; }
+.tag-paid { background: var(--orange-l); color: #b45309; }
+
+.expand-row td { padding: 0; border-bottom: 1px solid var(--border); cursor: default; }
+.expand-content {
+  padding: 20px 28px;
+  background: linear-gradient(180deg, var(--primary-ll), var(--bg-2));
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 36px;
+}
+.expand-content .label {
+  font-size: 11px; color: var(--text-3);
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.expand-content .value { font-size: 13.5px; color: var(--text); font-weight: 500; margin-top: 2px; }
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex; justify-content: center; align-items: center;
+  gap: 5px; margin-top: 20px;
+}
+.page-btn {
+  min-width: 36px; height: 36px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--card);
+  font-size: 13px; font-weight: 600; color: var(--text-2);
+  cursor: pointer; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); background: var(--primary-ll); }
+.page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 2px 8px rgba(99,102,241,0.25); }
+.page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.page-info { font-size: 13px; color: var(--text-2); margin: 0 8px; font-weight: 500; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(15,23,42,0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  animation: overlayIn 0.2s ease;
+}
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--card); border-radius: var(--radius-xl);
+  max-width: 560px; width: 90%; max-height: 85vh;
+  overflow-y: auto; box-shadow: var(--shadow-xl);
+  position: relative;
+  animation: modalIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal.wide { max-width: 760px; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: none; background: var(--bg); cursor: pointer;
+  font-size: 18px; color: var(--text-2);
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.modal-close:hover { background: var(--border); color: var(--text); }
+
+/* ===== NEWS PAGE ===== */
+.news-filter { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.filter-chip {
+  padding: 7px 18px; border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--text-2); cursor: pointer; transition: var(--transition);
+}
+.filter-chip:hover { border-color: var(--primary); color: var(--primary); }
+.filter-chip.active {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+.news-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-xs);
+}
+.news-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+  transform: translateY(-4px);
+}
+.news-card .cover {
+  width: 100%; height: 180px; object-fit: cover;
+  background: var(--bg-2);
+}
+.news-card .cover-placeholder {
+  width: 100%; height: 180px;
+  background: linear-gradient(135deg, var(--primary-ll), var(--purple-l));
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-3); font-size: 14px; font-weight: 500;
+}
+.news-card .body { padding: 18px; }
+.news-card .cat-tag {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 6px; margin-bottom: 10px;
+}
+.cat-newcards { background: var(--orange-l); color: #b45309; }
+.cat-event { background: var(--blue-l); color: #1e40af; }
+.cat-rules { background: var(--green-l); color: #047857; }
+.cat-official { background: var(--bg-2); color: var(--text-2); }
+.news-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; line-height: 1.4; color: var(--text); letter-spacing: -0.2px; }
+.news-card p {
+  font-size: 13px; color: var(--text-2); margin-bottom: 10px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.news-card .time { font-size: 12px; color: var(--text-3); font-weight: 500; }
+
+/* ===== CARDS PAGE ===== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 18px;
+}
+.card-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  box-shadow: var(--shadow-xs);
+}
+.card-item:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+  transform: translateY(-6px);
+}
+.card-img-wrap {
+  width: 100%;
+  aspect-ratio: 63/88;
+  background: linear-gradient(135deg, var(--bg-2), var(--bg));
+  overflow: hidden;
+  position: relative;
+}
+.card-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.35s ease;
+}
+.card-item:hover .card-img-wrap img { transform: scale(1.08); }
+.card-rarity-badge {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 10px; font-weight: 800;
+  padding: 3px 8px; border-radius: 6px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  z-index: 1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.card-info { padding: 12px 14px; }
+.card-name {
+  font-size: 13.5px; font-weight: 600; color: var(--text);
+  line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-meta {
+  display: flex; gap: 6px; margin-top: 5px;
+  font-size: 11px; color: var(--text-3); font-weight: 500;
+}
+.card-meta .type-tag {
+  padding: 2px 7px; border-radius: 5px;
+  background: var(--bg-2); color: var(--text-2);
+}
+
+/* Card detail modal */
+.card-detail-modal {
+  display: flex; gap: 0;
+  max-width: 760px;
+}
+.card-detail-img {
+  flex-shrink: 0;
+  width: 300px;
+  background: linear-gradient(135deg, var(--bg-2), var(--bg));
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.card-detail-img img {
+  width: 100%; height: auto;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+.card-detail-info {
+  flex: 1; padding: 28px;
+}
+.card-detail-info h2 {
+  font-size: 22px; font-weight: 800; margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+.card-detail-code {
+  font-size: 12px; color: var(--text-3); margin-bottom: 20px;
+  font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+  font-weight: 600; letter-spacing: 0.5px;
+}
+.card-detail-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.card-detail-row:last-child { border-bottom: none; }
+.card-detail-row .label {
+  font-size: 12px; color: var(--text-3); font-weight: 600;
+  width: 70px; flex-shrink: 0;
+}
+.card-detail-row .value {
+  font-size: 14px; color: var(--text); font-weight: 600;
+}
+
+/* ===== DECK PLAZA PAGE ===== */
+.decks-toolbar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  box-shadow: var(--shadow-xs);
+}
+.filter-tabs {
+  display: inline-flex; gap: 6px;
+  background: var(--bg-2); padding: 4px;
+  border-radius: 8px;
+}
+.filter-tab {
+  padding: 6px 14px; border-radius: 6px;
+  border: none; background: transparent;
+  font-size: 13px; font-weight: 600; color: var(--text-2);
+  cursor: pointer; transition: var(--transition);
+}
+.filter-tab:hover { color: var(--text); }
+.filter-tab.active { background: var(--card); color: var(--primary); box-shadow: var(--shadow-xs); }
+.decks-grid {
+  display: block;
+}
+.deck-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-xs);
+  position: relative;
+}
+.deck-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+  transform: translateY(-4px);
+}
+.deck-card-header {
+  display: flex; gap: 14px; padding: 16px;
+  background: linear-gradient(135deg, var(--primary-ll), var(--bg-2));
+}
+.deck-commander-img {
+  width: 72px; height: 100px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-2);
+}
+.deck-card-info { flex: 1; min-width: 0; }
+.deck-card-name {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 4px; line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.deck-card-commander {
+  font-size: 12px; color: var(--primary); font-weight: 600;
+  margin-bottom: 6px;
+}
+.deck-card-meta {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  font-size: 11.5px; color: var(--text-2); font-weight: 500;
+}
+.deck-card-meta .meta-item {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 5px;
+}
+.deck-card-meta .meta-item.type-tag { font-weight: 700; }
+.deck-card-meta .meta-item.type-limited { background: #dbeafe; color: #2563eb; }
+.deck-card-meta .meta-item.type-constructed { background: #dcfce7; color: #16a34a; }
+.rank-badge {
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 5px;
+}
+.rank-1 { background: #fef3c7; color: #92400e; }
+.rank-2 { background: #e0e7ff; color: #3730a3; }
+.rank-3 { background: #fee2e2; color: #991b1b; }
+.rank-4 { background: #d1fae5; color: #065f46; }
+.rank-other { background: var(--bg-2); color: var(--text-2); }
+
+/* Rank corner badge on deck card */
+.deck-rank-corner {
+  position: absolute; top: 0; left: 0;
+  width: 36px; height: 36px;
+  border-radius: var(--radius-lg) 0 var(--radius-lg) 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800; z-index: 2;
+  box-shadow: var(--shadow-sm);
+}
+.deck-rank-corner.r1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #fff; }
+.deck-rank-corner.r2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #fff; }
+.deck-rank-corner.r3 { background: linear-gradient(135deg, #cd7f32, #b45309); color: #fff; }
+.deck-rank-corner.r4 { background: linear-gradient(135deg, #34d399, #059669); color: #fff; }
+.deck-rank-corner.rN { background: rgba(99,102,241,0.12); color: var(--text-2); font-size: 12px; }
+.deck-card-footer {
+  padding: 10px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--text-3); font-weight: 500;
+}
+.deck-card-stats {
+  display: flex; gap: 12px;
+}
+.deck-card-stats span { display: inline-flex; align-items: center; gap: 3px; }
+
+/* Tournament list (first level) - list style */
+.tournaments-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+.tournament-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.tournament-row:last-child { border-bottom: none; }
+.tournament-row:hover {
+  background: var(--primary-ll);
+}
+.tournament-row-num {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--text-3);
+  background: var(--bg-2); border-radius: 8px;
+  flex-shrink: 0;
+}
+.tournament-row-name {
+  flex: 1; min-width: 0;
+  font-size: 15px; font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tournament-row-city {
+  flex-shrink: 0;
+  font-size: 13px; font-weight: 600; color: var(--primary);
+  background: var(--primary-ll); padding: 4px 12px; border-radius: 6px;
+  white-space: nowrap;
+}
+.tournament-row-city.unknown {
+  color: var(--text-3); background: var(--bg-2);
+}
+.tournament-row-type {
+  flex-shrink: 0;
+  font-size: 12px; font-weight: 600;
+  padding: 3px 10px; border-radius: 5px;
+  white-space: nowrap;
+}
+.tournament-row-type.现开赛 { color: #2563eb; background: #dbeafe; }
+.tournament-row-type.构筑赛 { color: #059669; background: #d1fae5; }
+.tournament-row-stats {
+  flex-shrink: 0;
+  display: flex; gap: 16px;
+  font-size: 13px; color: var(--text-3); font-weight: 500;
+}
+.tournament-row-stats .num {
+  font-weight: 700; color: var(--text);
+}
+.tournament-row-arrow {
+  flex-shrink: 0;
+  color: var(--text-3); font-size: 18px;
+}
+.tournament-row:hover .tournament-row-arrow {
+  color: var(--primary);
+}
+.deck-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px; font-weight: 600;
+}
+.breadcrumb-back {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer; color: var(--primary);
+  transition: var(--transition);
+  font-size: 13px; font-weight: 600;
+}
+.breadcrumb-back:hover {
+  background: var(--primary-ll); border-color: var(--primary);
+}
+.breadcrumb-sep { color: var(--text-3); }
+.breadcrumb-current { color: var(--text); }
+
+/* Deck list (second level) - list style */
+.deck-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+.deck-list-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.deck-list-row:last-child { border-bottom: none; }
+.deck-list-row:hover { background: var(--primary-ll); }
+.deck-list-rank {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800;
+  border-radius: 8px; flex-shrink: 0;
+}
+.deck-list-rank.r1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #fff; }
+.deck-list-rank.r2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #fff; }
+.deck-list-rank.r3 { background: linear-gradient(135deg, #cd7f32, #b45309); color: #fff; }
+.deck-list-rank.r4 { background: linear-gradient(135deg, #34d399, #059669); color: #fff; }
+.deck-list-rank.rN { background: var(--bg-2); color: var(--text-3); font-size: 13px; }
+.deck-list-cmd {
+  width: 40px; height: 56px;
+  border-radius: 5px; object-fit: cover;
+  flex-shrink: 0; box-shadow: var(--shadow-xs);
+  background: var(--bg-2);
+}
+.deck-list-info { flex: 1; min-width: 0; }
+.deck-list-name {
+  font-size: 14.5px; font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.deck-list-sub {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: var(--text-2); font-weight: 500;
+}
+.deck-list-sub .cmd-name { color: var(--primary); font-weight: 600; }
+.deck-list-city {
+  flex-shrink: 0;
+  font-size: 12.5px; font-weight: 600; color: var(--primary);
+  background: var(--primary-ll); padding: 4px 10px; border-radius: 5px;
+  white-space: nowrap;
+}
+.deck-list-type {
+  flex-shrink: 0;
+  font-size: 11.5px; font-weight: 600;
+  padding: 3px 9px; border-radius: 5px; white-space: nowrap;
+}
+.deck-list-type.现开赛 { color: #2563eb; background: #dbeafe; }
+.deck-list-type.构筑赛 { color: #059669; background: #d1fae5; }
+.deck-list-stats {
+  flex-shrink: 0;
+  display: flex; gap: 12px;
+  font-size: 12.5px; color: var(--text-3); font-weight: 500;
+}
+.deck-list-stats .num { font-weight: 700; color: var(--text); }
+.deck-list-arrow { flex-shrink: 0; color: var(--text-3); font-size: 18px; }
+.deck-list-row:hover .deck-list-arrow { color: var(--primary); }
+
+/* Deck detail modal */
+.deck-detail-modal { max-width: 1280px; }
+.deck-detail-header {
+  display: flex; gap: 28px; padding: 32px;
+  background: linear-gradient(135deg, var(--primary-ll), var(--purple-l));
+  border-bottom: 1px solid var(--border);
+}
+.deck-detail-commander {
+  width: 240px; height: 336px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  box-shadow: var(--shadow-lg);
+  flex-shrink: 0;
+  background: var(--bg-2);
+}
+.deck-detail-title {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+}
+.deck-detail-title h2 {
+  font-size: 28px; font-weight: 800; margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+.deck-detail-title .commander-name {
+  font-size: 20px; color: var(--primary); font-weight: 600; margin-bottom: 14px;
+}
+.deck-detail-title .info-row {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  font-size: 16px; color: var(--text-2); font-weight: 500;
+}
+.deck-detail-title .info-row .info-tag {
+  background: rgba(255,255,255,0.8); padding: 5px 14px; border-radius: 6px;
+}
+.deck-detail-body { padding: 32px 36px; }
+.deck-section-title {
+  font-size: 20px; font-weight: 700; color: var(--text);
+  margin: 28px 0 16px; display: flex; align-items: center; gap: 12px;
+}
+.deck-section-title:first-child { margin-top: 0; }
+.deck-section-title .count {
+  font-size: 15px; font-weight: 600; color: var(--text-3);
+  background: var(--bg-2); padding: 4px 12px; border-radius: 6px;
+}
+.deck-card-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.deck-card-item {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 16px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  cursor: pointer; text-align: center;
+}
+.deck-card-item:hover {
+  border-color: var(--primary);
+  background: var(--primary-ll);
+}
+.deck-card-item img {
+  width: 108px; height: 150px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-2);
+}
+.deck-card-item .card-name {
+  font-size: 15px; font-weight: 500; color: var(--text);
+  line-height: 1.35;
+  max-width: 100%;
+}
+.deck-card-item .card-count {
+  font-size: 14px; font-weight: 700; color: var(--primary);
+}
+.deck-code-box {
+  display: flex; align-items: center; gap: 8px;
+  margin: 16px 0;
+  padding: 10px 14px;
+  background: var(--bg-2);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border-2);
+}
+.deck-code-box .code {
+  font-family: 'SF Mono', 'Monaco', monospace;
+  font-size: 13px; font-weight: 600; color: var(--text);
+  flex: 1; word-break: break-all;
+}
+.copy-btn {
+  padding: 5px 14px; border-radius: 6px;
+  border: none; background: var(--primary); color: #fff;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: var(--transition); white-space: nowrap;
+}
+.copy-btn:hover { background: var(--primary-d); }
+.copy-btn.copied { background: var(--green); }
+
+/* Deck stats banner */
+.deck-stats-banner {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-xs);
+}
+.stat-card .stat-label {
+  font-size: 11px; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+}
+.stat-card .stat-value {
+  font-size: 13px; color: var(--text); font-weight: 600; line-height: 1.6;
+}
+.stat-card .stat-value .commander-bar {
+  display: flex; align-items: center; gap: 6px;
+}
+.stat-card .stat-value .bar {
+  height: 6px; border-radius: 3px;
+  background: var(--primary-l);
+  position: relative; overflow: hidden;
+}
+.stat-card .stat-value .bar-fill {
+  position: absolute; left: 0; top: 0; height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--purple));
+}
+.stat-card .stat-value .commander-count {
+  font-size: 11px; color: var(--text-3); font-weight: 500; margin-left: auto;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .nav-inner { padding: 0 16px; height: 56px; }
+  .nav-brand { font-size: 15px; }
+  .nav-tab { padding: 6px 14px; font-size: 12.5px; }
+  .container { padding: 16px; }
+  .news-grid { grid-template-columns: 1fr; }
+  .events-toolbar, .cards-toolbar, .decks-toolbar { flex-direction: column; align-items: stretch; padding: 12px; }
+  .search-input { min-width: 0; flex: 1; }
+  .toolbar-group { flex-wrap: wrap; }
+  .table-wrap { overflow-x: auto; }
+  table { min-width: 800px; }
+  .expand-content { grid-template-columns: 1fr; gap: 8px; }
+  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 12px; }
+  .card-detail-modal { flex-direction: column; }
+  .card-detail-img { width: 100%; max-height: 320px; }
+  .card-detail-info { padding: 20px; }
+  .decks-grid { grid-template-columns: 1fr; }
+  .tournament-row { padding: 12px 16px; gap: 10px; flex-wrap: wrap; }
+  .tournament-row-stats { gap: 10px; font-size: 12px; }
+  .deck-list-row { padding: 10px 14px; gap: 10px; flex-wrap: wrap; }
+  .deck-list-stats { gap: 8px; font-size: 11.5px; }
+  .deck-list-cmd { width: 32px; height: 44px; }
+  .deck-detail-header { flex-direction: column; align-items: center; text-align: center; }
+  .deck-detail-title { text-align: center; }
+  .deck-card-list { grid-template-columns: repeat(2, 1fr); }
+  .deck-card-item img { width: 80px; height: 112px; }
+  .deck-card-item .card-name { font-size: 13px; }
+  .deck-detail-commander { width: 180px; height: 252px; }
+}
+
+/* ===== FOOTER ===== */
+.site-footer {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 18px 28px;
+  margin-top: 48px;
+}
+.footer-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.footer-inner .footer-brand { font-weight: 600; color: var(--text-2); }
+#busuanzi_container { font-size: 12px; }
+#busuanzi_container span { color: var(--primary); font-weight: 600; }
+#busuanzi_value_site_pv:empty::after,
+#busuanzi_value_site_uv:empty::after { content: '--'; color: var(--text-3); font-weight: 400; }
+@media (max-width: 640px) {
+  .footer-inner { flex-direction: column; gap: 4px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand" onclick="switchPage('events')">
+      正面对决大本营
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-page="events" onclick="switchPage('events')">赛事活动</button>
+      <button class="nav-tab" data-page="news" onclick="switchPage('news')">资讯</button>
+      <button class="nav-tab" data-page="cards" onclick="switchPage('cards')">卡牌</button>
+      <a class="nav-tab" href="deck-builder.html" style="text-decoration:none">组卡器</a>
+      <a class="nav-tab" href="deck-manager.html" style="text-decoration:none">卡组管理</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== NEWS PAGE ===== -->
+<div class="container">
+  <div class="page" id="page-news">
+    <h2 class="section-title">最新资讯 <span class="badge" id="news-count"></span></h2>
+    <div class="news-filter" id="news-filter"></div>
+    <div class="news-grid" id="news-grid"></div>
+  </div>
+
+  <!-- ===== CARDS PAGE ===== -->
+  <div class="page" id="page-cards">
+    <h2 class="section-title">卡牌图鉴 <span class="badge" id="cards-badge"></span></h2>
+    <div class="cards-toolbar">
+      <div class="toolbar-group" id="card-type-filter"></div>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-group" id="card-attr-filter"></div>
+      <div class="toolbar-divider"></div>
+      <select class="select-input" id="card-cost-filter" onchange="applyCardFilters()">
+        <option value="">全部费用</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8+">8+</option>
+      </select>
+      <select class="select-input" id="card-rarity-filter" onchange="applyCardFilters()">
+        <option value="">全部稀有度</option>
+      </select>
+      <select class="select-input" id="card-set-filter" onchange="applyCardFilters()">
+        <option value="">全部系列</option>
+      </select>
+      <input class="search-input" id="card-search" placeholder="搜索卡名..." oninput="applyCardFilters()">
+      <div class="toolbar-spacer"></div>
+      <span class="toolbar-count" id="card-result-count"></span>
+    </div>
+    <div class="cards-grid" id="cards-grid"></div>
+    <div class="pagination" id="card-pagination"></div>
+  </div>
+
+  <!-- ===== EVENTS PAGE ===== -->
+  <div class="page active" id="page-events">
+    <h2 class="section-title">赛事活动 <span class="badge" id="events-badge"></span></h2>
+    <div class="events-toolbar">
+      <div class="toolbar-group">
+        <button class="type-btn active" data-type="all" onclick="setTypeFilter('all')">全部</button>
+        <button class="type-btn" data-type="构筑赛" onclick="setTypeFilter('构筑赛')">构筑赛</button>
+        <button class="type-btn" data-type="现开赛" onclick="setTypeFilter('现开赛')">现开赛</button>
+      </div>
+      <select class="select-input" id="province-filter" onchange="onProvinceChange()">
+        <option value="">全部省份</option>
+      </select>
+      <select class="select-input" id="city-filter" onchange="applyFilters()" disabled>
+        <option value="">全部城市</option>
+      </select>
+      <select class="select-input" id="date-filter" onchange="applyFilters()">
+        <option value="">全部日期</option>
+      </select>
+      <select class="select-input" id="fee-filter" onchange="applyFilters()">
+        <option value="">全部费用</option>
+        <option value="free">免费</option>
+        <option value="paid">收费</option>
+      </select>
+      <input class="search-input" id="search-input" placeholder="搜索赛事/场地..." oninput="applyFilters()">
+      <div class="toolbar-spacer"></div>
+      <span class="toolbar-count" id="result-count"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="events-table">
+        <thead>
+          <tr>
+            <th style="width:40px">#</th>
+            <th onclick="setSort('name')">赛事名称 <span class="sort-arrow"></span></th>
+            <th style="width:80px" onclick="setSort('type')">类型 <span class="sort-arrow"></span></th>
+            <th style="width:90px" onclick="setSort('startDate')">日期 <span class="sort-arrow"></span></th>
+            <th style="width:110px" onclick="setSort('time')">时间 <span class="sort-arrow"></span></th>
+            <th style="width:70px" onclick="setSort('city')">城市 <span class="sort-arrow"></span></th>
+            <th onclick="setSort('organizer')">场地/主办方 <span class="sort-arrow"></span></th>
+            <th style="width:70px" onclick="setSort('fee')">报名费 <span class="sort-arrow"></span></th>
+            <th style="width:60px" onclick="setSort('capacity')">名额 <span class="sort-arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="events-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- ===== DECKS PAGE ===== -->
+  <div class="page" id="page-decks">
+    <h2 class="section-title">卡组广场 <span class="badge" id="decks-badge"></span></h2>
+    <div class="deck-stats-banner" id="deck-stats-banner"></div>
+
+    <!-- Tournament list view (first level) -->
+    <div id="deck-tournament-view">
+      <div class="decks-toolbar">
+        <div class="filter-tabs" id="deck-tournament-type-filter">
+          <button class="filter-tab active" data-type="" onclick="setTournamentTypeFilter('')">全部类型</button>
+          <button class="filter-tab" data-type="构筑赛" onclick="setTournamentTypeFilter('构筑赛')">构筑赛</button>
+          <button class="filter-tab" data-type="现开赛" onclick="setTournamentTypeFilter('现开赛')">现开赛</button>
+        </div>
+        <input class="search-input" id="deck-tournament-search" placeholder="搜索比赛名称..." oninput="renderTournaments()" style="max-width:240px">
+        <div class="toolbar-spacer"></div>
+        <span class="toolbar-count" id="tournament-result-count"></span>
+      </div>
+      <div class="tournaments-grid" id="tournaments-grid"></div>
+    </div>
+
+    <!-- Deck list view (second level) -->
+    <div id="deck-list-view" style="display:none">
+      <div class="deck-breadcrumb">
+        <span class="breadcrumb-back" onclick="backToTournaments()">&#8592; 返回比赛列表</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current" id="breadcrumb-tournament-name"></span>
+      </div>
+      <div class="decks-toolbar">
+        <select class="select-input" id="deck-commander-filter" onchange="applyDeckFilters()">
+          <option value="">全部统帅</option>
+        </select>
+        <select class="select-input" id="deck-sort-filter" onchange="applyDeckFilters()">
+          <option value="rank">名次优先</option>
+          <option value="date">最新优先</option>
+          <option value="cards">卡牌数量</option>
+        </select>
+        <input class="search-input" id="deck-search" placeholder="搜索卡组名/玩家..." oninput="applyDeckFilters()">
+        <div class="toolbar-spacer"></div>
+        <span class="toolbar-count" id="deck-result-count"></span>
+      </div>
+      <div class="decks-grid" id="decks-grid"></div>
+      <div class="pagination" id="deck-pagination"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-brand">正面对决大本营 · 赛事活动信息社区</span>
+    <span id="busuanzi_container">本站总访问量 <span id="busuanzi_value_site_pv"></span> 次 · 访客数 <span id="busuanzi_value_site_uv"></span> 人</span>
+  </div>
+</footer>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-box"></div>
+</div>
+
+<script>
+// ===== DATA =====
+var D = window.APP_DATA;
+var activities = D.activities;
+var articles = D.articles;
+var stats = D.stats;
+
+// ===== STATE =====
+var state = {
+  page: 'events',
+  newsFilter: 'all',
+  typeFilter: 'all',
+  provinceFilter: '',
+  cityFilter: '',
+  dateFilter: '',
+  feeFilter: '',
+  search: '',
+  sortKey: 'startDate',
+  sortDir: -1,
+  pageNum: 1,
+  pageSize: 50,
+  expandedRow: -1
+};
+
+// ===== PAGE SWITCHING =====
+function switchPage(page) {
+  state.page = page;
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(function(t) {
+    t.classList.toggle('active', t.dataset.page === page);
+  });
+  window.scrollTo(0, 0);
+}
+
+// ===== NEWS PAGE =====
+function renderNewsFilter() {
+  var cats = [
+    {key: 'all', label: '全部'},
+    {key: 'newcards', label: '新卡预览'},
+    {key: 'event', label: '赛事预告'},
+    {key: 'rules', label: '玩法规则'},
+    {key: 'official', label: '官方公告'}
+  ];
+  var html = cats.map(function(c) {
+    return '<span class="filter-chip' + (state.newsFilter === c.key ? ' active' : '') + '" onclick="setNewsFilter(\'' + c.key + '\')">' + c.label + '</span>';
+  }).join('');
+  document.getElementById('news-filter').innerHTML = html;
+}
+
+function setNewsFilter(key) {
+  state.newsFilter = key;
+  renderNews();
+  renderNewsFilter();
+}
+
+function renderNews() {
+  var filtered = articles;
+  if (state.newsFilter !== 'all') {
+    filtered = articles.filter(function(a) { return a.category === state.newsFilter; });
+  }
+  document.getElementById('news-count').textContent = filtered.length + ' 篇';
+
+  var html = filtered.map(function(a) {
+    var coverHtml = a.cover
+      ? '<img class="cover" src="' + a.cover + '" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="cover-placeholder" style="display:none">暂无封面</div>'
+      : '<div class="cover-placeholder">暂无封面</div>';
+    var timeStr = new Date(a.publishTime).toLocaleDateString('zh-CN', {year:'numeric', month:'long', day:'numeric'});
+    return '<div class="news-card" onclick="window.open(\'' + a.jumpUrl + '\', \'_blank\')">' +
+      coverHtml +
+      '<div class="body">' +
+        '<span class="cat-tag cat-' + a.category + '">' + a.categoryName + '</span>' +
+        '<h3>' + a.title + '</h3>' +
+        '<p>' + (a.summary || '点击查看详情') + '</p>' +
+        '<span class="time">' + timeStr + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  document.getElementById('news-grid').innerHTML = html;
+}
+
+// ===== EVENTS PAGE =====
+function setTypeFilter(type) {
+  state.typeFilter = type;
+  state.pageNum = 1;
+  document.querySelectorAll('.type-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.type === type);
+  });
+  applyFilters();
+}
+
+function applyFilters() {
+  state.provinceFilter = document.getElementById('province-filter').value;
+  state.cityFilter = document.getElementById('city-filter').value;
+  state.dateFilter = document.getElementById('date-filter').value;
+  state.feeFilter = document.getElementById('fee-filter').value;
+  state.search = document.getElementById('search-input').value.toLowerCase().trim();
+  state.pageNum = 1;
+  renderEvents();
+}
+
+function onProvinceChange() {
+  var province = document.getElementById('province-filter').value;
+  var citySel = document.getElementById('city-filter');
+  citySel.innerHTML = '<option value="">全部城市</option>';
+  if (!province) {
+    citySel.disabled = true;
+    state.cityFilter = '';
+    applyFilters();
+    return;
+  }
+  // Collect cities within this province
+  var seen = {};
+  activities.forEach(function(a) {
+    if (a.province === province && a.city && !seen[a.city]) {
+      seen[a.city] = (stats.cityCount[a.city] || 0);
+    }
+  });
+  var cityList = Object.keys(seen).sort(function(a, b) {
+    return seen[b] - seen[a];
+  });
+  cityList.forEach(function(c) {
+    var opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c + ' (' + seen[c] + ')';
+    citySel.appendChild(opt);
+  });
+  citySel.disabled = false;
+  state.cityFilter = '';
+  applyFilters();
+}
+
+function setSort(key) {
+  if (state.sortKey === key) {
+    state.sortDir = -state.sortDir;
+  } else {
+    state.sortKey = key;
+    state.sortDir = 1;
+  }
+  renderEvents();
+}
+
+function getFilteredEvents() {
+  var filtered = activities.filter(function(a) {
+    if (state.typeFilter !== 'all' && a.type !== state.typeFilter) return false;
+    if (state.provinceFilter && a.province !== state.provinceFilter) return false;
+    if (state.cityFilter && a.city !== state.cityFilter) return false;
+    if (state.dateFilter && a.startDate !== state.dateFilter) return false;
+    if (state.feeFilter === 'free' && a.fee > 0) return false;
+    if (state.feeFilter === 'paid' && (a.fee === 0 || a.fee === null || a.fee === undefined)) return false;
+    if (state.search) {
+      var s = state.search;
+      if (a.name.toLowerCase().indexOf(s) === -1 &&
+          a.organizer.toLowerCase().indexOf(s) === -1 &&
+          a.city.toLowerCase().indexOf(s) === -1 &&
+          a.address.toLowerCase().indexOf(s) === -1) return false;
+    }
+    return true;
+  });
+
+  var key = state.sortKey;
+  var dir = state.sortDir;
+  filtered.sort(function(a, b) {
+    var va, vb;
+    if (key === 'time') { va = a.startTime; vb = b.startTime; }
+    else if (key === 'fee') { va = a.fee || 0; vb = b.fee || 0; }
+    else if (key === 'capacity') { va = a.max; vb = b.max; }
+    else { va = a[key] || ''; vb = b[key] || ''; }
+    if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+    if (va < vb) return -1 * dir;
+    if (va > vb) return 1 * dir;
+    return 0;
+  });
+  return filtered;
+}
+
+function renderEvents() {
+  var filtered = getFilteredEvents();
+  var totalPages = Math.ceil(filtered.length / state.pageSize);
+  if (state.pageNum > totalPages) state.pageNum = totalPages || 1;
+  if (state.pageNum < 1) state.pageNum = 1;
+
+  var start = (state.pageNum - 1) * state.pageSize;
+  var pageData = filtered.slice(start, start + state.pageSize);
+
+  document.getElementById('result-count').textContent = '共 ' + filtered.length + ' 场';
+  document.getElementById('events-badge').textContent = filtered.length + ' 场';
+
+  // Sort indicators
+  document.querySelectorAll('th').forEach(function(th) {
+    th.classList.remove('sorted');
+    var arrow = th.querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = '';
+  });
+  var sortedTh = document.querySelector('th[onclick="setSort(\'' + state.sortKey + '\')"]');
+  if (sortedTh) {
+    sortedTh.classList.add('sorted');
+    var arrow = sortedTh.querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = state.sortDir > 0 ? ' \u2191' : ' \u2193';
+  }
+
+  var html = '';
+  pageData.forEach(function(a, i) {
+    var idx = start + i + 1;
+    var typeClass = a.type === '构筑赛' ? 'tag-construct' : 'tag-sealed';
+    var feeClass = (a.fee === 0 || a.fee === null) ? 'tag-free' : 'tag-paid';
+    var feeText = (a.fee === 0 || a.fee === null) ? '免费' : '\u00a5' + a.fee;
+    var timeStr = (a.startTime || '--:--') + '-' + (a.endTime || '--:--');
+    var capacityText = a.current + '/' + (a.max >= 999 ? '\u221e' : a.max);
+
+    html += '<tr onclick="toggleRow(' + a.id + ')" style="cursor:pointer">' +
+      '<td>' + idx + '</td>' +
+      '<td class="event-name">' + a.name + '</td>' +
+      '<td><span class="tag ' + typeClass + '">' + a.type + '</span></td>' +
+      '<td>' + (a.startDate || '').slice(5).replace('-', '/') + '</td>' +
+      '<td>' + timeStr + '</td>' +
+      '<td>' + a.city + '</td>' +
+      '<td>' + (a.organizer || '-') + '</td>' +
+      '<td><span class="tag ' + feeClass + '">' + feeText + '</span></td>' +
+      '<td>' + capacityText + '</td>' +
+    '</tr>';
+
+    if (state.expandedRow === a.id) {
+      html += '<tr class="expand-row"><td colspan="9"><div class="expand-content">' +
+        detailItem('赛事ID', a.id) +
+        detailItem('赛事类型', a.type) +
+        detailItem('开始日期', a.startDate || '-') +
+        detailItem('结束日期', a.endDate || '-') +
+        detailItem('签到时间', (a.checkInStart || '') + ' - ' + (a.checkInEnd || '')) +
+        detailItem('比赛时间', (a.startTime || '') + ' - ' + (a.endTime || '')) +
+        detailItem('报名开始', a.applyStart || '-') +
+        detailItem('报名截止', a.applyEnd || '-') +
+        detailItem('城市', a.city) +
+        detailItem('地址', a.address || '-') +
+        detailItem('主办方', a.organizer || '-') +
+        detailItem('报名费', (a.fee === 0 || a.fee === null) ? '免费' : '\u00a5' + a.fee) +
+        detailItem('当前报名', a.current + ' 人') +
+        detailItem('容量上限', a.max >= 999 ? '不限' : a.max + ' 人') +
+        detailItem('描述', a.desc || '-') +
+        '</div></td></tr>';
+    }
+  });
+
+  if (pageData.length === 0) {
+    html = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-3)">没有找到匹配的赛事</td></tr>';
+  }
+
+  document.getElementById('events-tbody').innerHTML = html;
+  renderPagination(filtered.length, totalPages);
+}
+
+function detailItem(label, value) {
+  return '<div class="detail-item"><div class="label">' + label + '</div><div class="value">' + value + '</div></div>';
+}
+
+function toggleRow(id) {
+  state.expandedRow = (state.expandedRow === id) ? -1 : id;
+  renderEvents();
+}
+
+function renderPagination(total, totalPages) {
+  if (totalPages <= 1) {
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+  var p = state.pageNum;
+  var html = '';
+  html += '<button class="page-btn" onclick="goPage(' + (p - 1) + ')"' + (p <= 1 ? ' disabled' : '') + '>\u2039</button>';
+  var startP = Math.max(1, p - 2);
+  var endP = Math.min(totalPages, p + 2);
+  if (startP > 1) {
+    html += '<button class="page-btn" onclick="goPage(1)">1</button>';
+    if (startP > 2) html += '<span class="page-info">...</span>';
+  }
+  for (var i = startP; i <= endP; i++) {
+    html += '<button class="page-btn' + (i === p ? ' active' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+  }
+  if (endP < totalPages) {
+    if (endP < totalPages - 1) html += '<span class="page-info">...</span>';
+    html += '<button class="page-btn" onclick="goPage(' + totalPages + ')">' + totalPages + '</button>';
+  }
+  html += '<button class="page-btn" onclick="goPage(' + (p + 1) + ')"' + (p >= totalPages ? ' disabled' : '') + '>\u203a</button>';
+  html += '<span class="page-info">' + p + ' / ' + totalPages + '</span>';
+  document.getElementById('pagination').innerHTML = html;
+}
+
+function goPage(n) {
+  state.pageNum = n;
+  state.expandedRow = -1;
+  renderEvents();
+  document.getElementById('page-events').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+// ===== FILTERS INIT =====
+function initFilters() {
+  try {
+    // Compute province stats
+    var provinceCount = {};
+    activities.forEach(function(a) {
+      if (a.province) provinceCount[a.province] = (provinceCount[a.province] || 0) + 1;
+    });
+    var provinces = Object.keys(provinceCount).sort(function(a, b) {
+      return provinceCount[b] - provinceCount[a];
+    });
+    var provSel = document.getElementById('province-filter');
+    if (!provSel) return;
+    provinces.forEach(function(p) {
+      var opt = document.createElement('option');
+      opt.value = p; opt.textContent = p + ' (' + provinceCount[p] + ')';
+      provSel.appendChild(opt);
+    });
+    console.log('[initFilters] 省份数:', provinces.length);
+
+    var dates = Object.keys(stats.dateCount).sort();
+    var dateSel = document.getElementById('date-filter');
+    if (!dateSel) return;
+    dates.forEach(function(d) {
+      var opt = document.createElement('option');
+      opt.value = d; opt.textContent = d.replace(/-/g, '/') + ' (' + stats.dateCount[d] + ')';
+      dateSel.appendChild(opt);
+    });
+  } catch (e) {
+    console.error('[initFilters] 错误:', e);
+  }
+}
+
+// ===== MODAL =====
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') document.getElementById('modal-overlay').classList.remove('show');
+});
+
+// ===== CARDS PAGE =====
+var CD = window.CARD_DATA;
+var allCards = CD ? CD.cards : [];
+var cardState = {
+  typeFilter: 'all',
+  attrFilter: 'all',
+  costFilter: '',
+  rarityFilter: '',
+  setFilter: '',
+  search: '',
+  sortKey: 'rarity',
+  sortDir: 1,
+  pageNum: 1,
+  pageSize: 60
+};
+
+var cardTypeLabels = {
+  'all': '全部',
+  '角色': '角色',
+  '统帅': '统帅',
+  '锦囊': '锦囊',
+  '附属': '附属',
+  '兵法': '兵法'
+};
+
+function initCardFilters() {
+  // Build missing stats from card data
+  if (!CD) return;
+  if (!CD.stats) CD.stats = {};
+  if (!CD.stats.sets) {
+    CD.stats.sets = {};
+    allCards.forEach(function(c) {
+      var s = c.pack || c.set || '未知';
+      CD.stats.sets[s] = (CD.stats.sets[s] || 0) + 1;
+    });
+  }
+  if (!CD.setNames) CD.setNames = {};
+  if (!CD.rarityOrder) {
+    CD.rarityOrder = { 'C': 1, 'UC': 2, 'R': 3, 'SR': 4, 'SSR': 5, 'CR': 6, 'L': 7, 'LR': 8, 'UR': 9, 'PR': 10 };
+  }
+  // Map English types to Chinese counts for display
+  var typeCountMap = { 'all': allCards.length };
+  var typeKeyMap = { '角色': 'unit', '统帅': 'commander', '锦囊': 'spell', '附属': 'attachment', '兵法': 'strategy' };
+  Object.keys(typeKeyMap).forEach(function(cn) {
+    typeCountMap[cn] = CD.stats.types[typeKeyMap[cn]] || 0;
+  });
+
+  // Type filter buttons
+  var types = ['all', '角色', '统帅', '锦囊', '附属', '兵法'];
+  var typeHtml = types.map(function(t) {
+    var label = cardTypeLabels[t];
+    var count = typeCountMap[t] || 0;
+    return '<button class="card-type-btn' + (cardState.typeFilter === t ? ' active' : '') + '" onclick="setCardTypeFilter(\'' + t + '\')">' + label + ' (' + count + ')</button>';
+  }).join('');
+  document.getElementById('card-type-filter').innerHTML = typeHtml;
+
+  // Attribute filter buttons (兵法属性)
+  var attrs = ['all', '风', '林', '火', '山', '阴', '雷'];
+  var attrHtml = attrs.map(function(a) {
+    var label = a === 'all' ? '全部' : a;
+    var count = a === 'all' ? allCards.length : allCards.filter(function(c) { return c.attribute === a; }).length;
+    return '<button class="attr-btn' + (cardState.attrFilter === a ? ' active' : '') + '" data-attr="' + a + '" onclick="setCardAttrFilter(\'' + a + '\')">' + label + ' (' + count + ')</button>';
+  }).join('');
+  document.getElementById('card-attr-filter').innerHTML = attrHtml;
+
+  // Rarity filter
+  var rarityOrder = CD.rarityOrder || {};
+  var rarityNames = { 'C': '普通', 'UC': '优通', 'R': '稀有', 'SR': '超稀有', 'SSR': '极稀有', 'CR': '典藏', 'L': '传说', 'LR': '传说稀有', 'UR': '究极稀有', 'PR': 'Promo' };
+  var raritySel = document.getElementById('card-rarity-filter');
+  Object.keys(rarityOrder).sort(function(a, b) { return rarityOrder[a] - rarityOrder[b]; }).forEach(function(r) {
+    var opt = document.createElement('option');
+    opt.value = r; opt.textContent = r + ' ' + rarityNames[r] + ' (' + (CD.stats.rarities[r] || 0) + ')';
+    raritySel.appendChild(opt);
+  });
+
+  // Set filter
+  var setSel = document.getElementById('card-set-filter');
+  Object.keys(CD.stats.sets || {}).sort().forEach(function(s) {
+    var opt = document.createElement('option');
+    opt.value = s; opt.textContent = (CD.setNames[s] || s) + ' (' + CD.stats.sets[s] + ')';
+    setSel.appendChild(opt);
+  });
+}
+
+function setCardTypeFilter(type) {
+  cardState.typeFilter = type;
+  cardState.pageNum = 1;
+  document.querySelectorAll('#card-type-filter .card-type-btn').forEach(function(b, i) {
+    var types = ['all', '角色', '统帅', '锦囊', '附属', '兵法'];
+    b.classList.toggle('active', types[i] === type);
+  });
+  applyCardFilters();
+}
+
+function setCardAttrFilter(attr) {
+  cardState.attrFilter = attr;
+  cardState.pageNum = 1;
+  document.querySelectorAll('#card-attr-filter .attr-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-attr') === attr);
+  });
+  applyCardFilters();
+}
+
+function applyCardFilters() {
+  cardState.costFilter = document.getElementById('card-cost-filter').value;
+  cardState.rarityFilter = document.getElementById('card-rarity-filter').value;
+  cardState.setFilter = document.getElementById('card-set-filter').value;
+  cardState.search = document.getElementById('card-search').value.toLowerCase().trim();
+  cardState.pageNum = 1;
+  renderCards();
+}
+
+function getFilteredCards() {
+  var typeMap = { '角色': 'unit', '统帅': 'commander', '锦囊': 'spell', '附属': 'attachment', '兵法': 'strategy' };
+  var filtered = allCards.filter(function(c) {
+    if (cardState.typeFilter !== 'all' && c.type !== typeMap[cardState.typeFilter]) return false;
+    if (cardState.typeFilter === '角色' && (c.isCommander || c.type === 'commander')) return false;
+    if (cardState.attrFilter !== 'all' && c.attribute !== cardState.attrFilter) return false;
+    if (cardState.costFilter) {
+      var cost = c.cost;
+      if (cardState.costFilter === '8+') { if (cost < 8) return false; }
+      else if (cost !== parseInt(cardState.costFilter)) return false;
+    }
+    if (cardState.rarityFilter && c.rarity !== cardState.rarityFilter) return false;
+    if (cardState.setFilter && (c.pack || c.set) !== cardState.setFilter) return false;
+    if (cardState.search && c.name.toLowerCase().indexOf(cardState.search) === -1) return false;
+    return true;
+  });
+
+  // Sort
+  var key = cardState.sortKey;
+  var dir = cardState.sortDir;
+  var rarityOrder = CD.rarityOrder || {};
+  filtered.sort(function(a, b) {
+    var va, vb;
+    if (key === 'rarity') { va = rarityOrder[a.rarity] || 99; vb = rarityOrder[b.rarity] || 99; }
+    else if (key === 'name') { va = a.name; vb = b.name; }
+    else if (key === 'number') { va = a.number; vb = b.number; }
+    else { va = a[key] || ''; vb = b[key] || ''; }
+    if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+    if (va < vb) return -1 * dir;
+    if (va > vb) return 1 * dir;
+    return 0;
+  });
+  return filtered;
+}
+
+function renderCards() {
+  var filtered = getFilteredCards();
+  var totalPages = Math.ceil(filtered.length / cardState.pageSize);
+  if (cardState.pageNum > totalPages) cardState.pageNum = totalPages || 1;
+  if (cardState.pageNum < 1) cardState.pageNum = 1;
+
+  var start = (cardState.pageNum - 1) * cardState.pageSize;
+  var pageData = filtered.slice(start, start + cardState.pageSize);
+
+  document.getElementById('card-result-count').textContent = '共 ' + filtered.length + ' 张';
+  document.getElementById('cards-badge').textContent = filtered.length + ' 张';
+
+  if (pageData.length === 0) {
+    document.getElementById('cards-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-3)">没有找到匹配的卡牌</div>';
+    document.getElementById('card-pagination').innerHTML = '';
+    return;
+  }
+
+  var html = pageData.map(function(c) {
+    return '<div class="card-item" onclick="showCardDetail(\'' + c.id + '\')">' +
+      '<div class="card-img-wrap">' +
+        '<span class="card-rarity-badge" style="background:' + c.rarityColor + '">' + c.rarity + '</span>' +
+        '<img src="' + c.imageUrl + '" loading="lazy" onerror="this.src=\'https://placehold.co/250x350/333333/eeeeee?text=' + encodeURIComponent(c.name) + '\'">' +
+      '</div>' +
+      '<div class="card-info">' +
+        '<div class="card-name" title="' + c.name + '">' + c.name + '</div>' +
+        '<div class="card-meta">' +
+          '<span class="type-tag">' + c.type + '</span>' +
+          '<span>' + c.set + '</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('cards-grid').innerHTML = html;
+  renderCardPagination(filtered.length, totalPages);
+}
+
+function renderCardPagination(total, totalPages) {
+  if (totalPages <= 1) {
+    document.getElementById('card-pagination').innerHTML = '';
+    return;
+  }
+  var p = cardState.pageNum;
+  var html = '';
+  html += '<button class="page-btn" onclick="goCardPage(' + (p - 1) + ')"' + (p <= 1 ? ' disabled' : '') + '>\u2039</button>';
+  var startP = Math.max(1, p - 2);
+  var endP = Math.min(totalPages, p + 2);
+  if (startP > 1) {
+    html += '<button class="page-btn" onclick="goCardPage(1)">1</button>';
+    if (startP > 2) html += '<span class="page-info">...</span>';
+  }
+  for (var i = startP; i <= endP; i++) {
+    html += '<button class="page-btn' + (i === p ? ' active' : '') + '" onclick="goCardPage(' + i + ')">' + i + '</button>';
+  }
+  if (endP < totalPages) {
+    if (endP < totalPages - 1) html += '<span class="page-info">...</span>';
+    html += '<button class="page-btn" onclick="goCardPage(' + totalPages + ')">' + totalPages + '</button>';
+  }
+  html += '<button class="page-btn" onclick="goCardPage(' + (p + 1) + ')"' + (p >= totalPages ? ' disabled' : '') + '>\u203a</button>';
+  html += '<span class="page-info">' + p + ' / ' + totalPages + '</span>';
+  document.getElementById('card-pagination').innerHTML = html;
+}
+
+function goCardPage(n) {
+  cardState.pageNum = n;
+  renderCards();
+  document.getElementById('page-cards').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function showCardDetail(id) {
+  var c = allCards.find(function(x) { return x.id === id; });
+  if (!c) return;
+
+  var rarityNames = { 'C': '普通 Common', 'UC': '优通 Uncommon', 'R': '稀有 Rare', 'SR': '超稀有 Super Rare', 'SSR': '极稀有 SSR', 'CR': '典藏 Collection Rare', 'L': '传说 Legendary', 'LR': '传说稀有 Legendary Rare', 'UR': '究极稀有 Ultra Rare', 'PR': 'Promo' };
+
+  var html = '<div class="card-detail-modal">' +
+    '<div class="card-detail-img">' +
+      '<img src="' + c.imageUrl + '" onerror="this.src=\'https://placehold.co/250x350/333333/eeeeee?text=' + encodeURIComponent(c.name) + '\'">' +
+    '</div>' +
+    '<div class="card-detail-info">' +
+      '<h2>' + c.name + '</h2>' +
+      '<div class="card-detail-code">' + c.id + '</div>' +
+      '<div class="card-detail-row"><span class="label">类型</span><span class="value">' + c.type + ' (' + c.engType + ')</span></div>' +
+      '<div class="card-detail-row"><span class="label">稀有度</span><span class="value"><span class="card-rarity-badge" style="position:static;background:' + c.rarityColor + '">' + c.rarity + '</span> ' + (rarityNames[c.rarity] || c.rarity) + '</span></div>' +
+      '<div class="card-detail-row"><span class="label">系列</span><span class="value">' + (CD.setNames[c.set] || c.set) + '</span></div>' +
+      '<div class="card-detail-row"><span class="label">编号</span><span class="value">' + c.number + '</span></div>' +
+      (c.isHero ? '<div class="card-detail-row"><span class="label">特殊</span><span class="value">主公</span></div>' : '') +
+      (c.isCommander ? '<div class="card-detail-row"><span class="label">特殊</span><span class="value">统帅</span></div>' : '') +
+      (c.health !== null ? '<div class="card-detail-row"><span class="label">体力</span><span class="value">' + c.health + '</span></div>' : '') +
+      '<div class="card-detail-row"><span class="label">费用</span><span class="value">' + (c.cost > 0 ? c.cost : '0') + '</span></div>' +
+      '<div class="card-detail-row"><span class="label">变体组</span><span class="value" style="font-size:12px;font-family:monospace">' + (c.variantGroupId || '-') + '</span></div>' +
+    '</div>' +
+  '</div>';
+
+  var box = document.getElementById('modal-box');
+  box.className = 'modal wide';
+  box.innerHTML = html +
+    '<button class="modal-close" style="position:absolute;top:12px;right:12px;z-index:10" onclick="document.getElementById(\'modal-overlay\').classList.remove(\'show\')">\u00d7</button>';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+// ===== DECK PLAZA PAGE =====
+var DK = window.DECK_DATA;
+var allDecks = DK ? DK.decks.filter(function(d) { return d.city && d.city.trim(); }) : [];
+var deckState = {
+  view: 'tournaments',       // 'tournaments' or 'decks'
+  currentTournament: '',     // selected tournament name
+  tournamentTypeFilter: '',
+  commanderFilter: '',
+  sortKey: 'rank',
+  search: '',
+  pageNum: 1,
+  pageSize: 24
+};
+
+function imgUrl(filename) {
+  return DK.ossBase + filename + DK.resizeParam;
+}
+
+// Group decks by tournament (activity name)
+function getTournaments() {
+  var map = {};
+  allDecks.forEach(function(d) {
+    if (!map[d.activity]) {
+      map[d.activity] = { name: d.activity, decks: [], types: {}, commanders: {}, dates: [], city: '', organizer: '' };
+    }
+    var t = map[d.activity];
+    t.decks.push(d);
+    t.types[d.type] = (t.types[d.type] || 0) + 1;
+    t.commanders[d.commander.name] = (t.commanders[d.commander.name] || 0) + 1;
+    t.dates.push(d.date);
+    // Use first deck's city/organizer
+    if (!t.city && d.city) { t.city = d.city; t.organizer = d.organizer; }
+  });
+  return Object.values(map).map(function(t) {
+    t.deckCount = t.decks.length;
+    t.typeList = Object.keys(t.types);
+    t.commanderCount = Object.keys(t.commanders).length;
+    t.dateMin = Math.min.apply(null, t.dates);
+    t.dateMax = Math.max.apply(null, t.dates);
+    return t;
+  }).sort(function(a, b) { return b.dateMax - a.dateMax; });
+}
+
+function setTournamentTypeFilter(type) {
+  deckState.tournamentTypeFilter = type;
+  document.querySelectorAll('#deck-tournament-type-filter .filter-tab').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.type === type);
+  });
+  renderTournaments();
+}
+
+function renderTournaments() {
+  var tournaments = getTournaments();
+  var typeFilter = deckState.tournamentTypeFilter;
+  var search = (document.getElementById('deck-tournament-search') || {}).value;
+  if (search) search = search.toLowerCase().trim();
+
+  var filtered = tournaments.filter(function(t) {
+    if (typeFilter && t.typeList.indexOf(typeFilter) === -1) return false;
+    if (search && t.name.toLowerCase().indexOf(search) === -1) return false;
+    return true;
+  });
+
+  // Sort by deck count descending
+  filtered.sort(function(a, b) { return b.deckCount - a.deckCount; });
+
+  document.getElementById('tournament-result-count').textContent = '共 ' + filtered.length + ' 场赛事';
+  document.getElementById('decks-badge').textContent = allDecks.length + ' 套';
+
+  if (filtered.length === 0) {
+    document.getElementById('tournaments-grid').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-3)">没有找到匹配的赛事</div>';
+    return;
+  }
+
+  var html = filtered.map(function(t, idx) {
+    var dateStr;
+    if (t.dateMin === t.dateMax) {
+      dateStr = new Date(t.dateMin).toLocaleDateString('zh-CN', {month: 'long', day: 'numeric'});
+    } else {
+      dateStr = new Date(t.dateMin).toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'}) + '-' +
+                new Date(t.dateMax).toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'});
+    }
+
+    var typeStr = t.typeList.join('/');
+    var typeClass = t.typeList.length === 1 ? t.typeList[0] : '现开赛';
+
+    // Get city from first deck of this tournament
+    var city = t.city || '';
+
+    var cityHtml = city
+      ? '<span class="tournament-row-city">' + city + '</span>'
+      : '<span class="tournament-row-city unknown">多地</span>';
+
+    return '<div class="tournament-row" onclick="enterTournament(\'' + t.name.replace(/'/g, "\\'") + '\')">' +
+      '<div class="tournament-row-num">' + (idx + 1) + '</div>' +
+      '<div class="tournament-row-name">' + t.name + '</div>' +
+      cityHtml +
+      '<span class="tournament-row-type ' + typeClass + '">' + typeStr + '</span>' +
+      '<div class="tournament-row-stats">' +
+        '<span><span class="num">' + t.deckCount + '</span> 套</span>' +
+        '<span><span class="num">' + t.commanderCount + '</span> 统帅</span>' +
+        '<span>' + dateStr + '</span>' +
+      '</div>' +
+      '<span class="tournament-row-arrow">&#8250;</span>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('tournaments-grid').innerHTML = html;
+}
+
+function enterTournament(name) {
+  deckState.view = 'decks';
+  deckState.currentTournament = name;
+  deckState.pageNum = 1;
+  deckState.commanderFilter = '';
+  deckState.search = '';
+  deckState.sortKey = 'rank';
+  var sortSel = document.getElementById('deck-sort-filter');
+  if (sortSel) sortSel.value = 'rank';
+
+  document.getElementById('deck-tournament-view').style.display = 'none';
+  document.getElementById('deck-list-view').style.display = '';
+  document.getElementById('breadcrumb-tournament-name').textContent = name;
+
+  // Rebuild commander filter for this tournament
+  var sel = document.getElementById('deck-commander-filter');
+  sel.innerHTML = '<option value="">全部统帅</option>';
+  var tournament = getTournaments().find(function(t) { return t.name === name; });
+  if (tournament) {
+    Object.entries(tournament.commanders).sort(function(a, b) { return b[1] - a[1]; }).forEach(function(c) {
+      var opt = document.createElement('option');
+      opt.value = c[0];
+      opt.textContent = c[0] + ' (' + c[1] + ')';
+      sel.appendChild(opt);
+    });
+  }
+
+  renderDecks();
+  document.getElementById('page-decks').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function backToTournaments() {
+  deckState.view = 'tournaments';
+  deckState.currentTournament = '';
+  document.getElementById('deck-list-view').style.display = 'none';
+  document.getElementById('deck-tournament-view').style.display = '';
+  renderTournaments();
+  document.getElementById('page-decks').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function initDeckFilters() {
+  // Recalculate stats from filtered decks (only those with city)
+  var cmdCount = {};
+  var cardCount = {};
+  allDecks.forEach(function(d) {
+    cmdCount[d.commander.name] = (cmdCount[d.commander.name] || 0) + 1;
+    d.main.forEach(function(c) { cardCount[c.n] = (cardCount[c.n] || 0) + c.c; });
+  });
+  var topCmds = Object.entries(cmdCount).sort(function(a,b){ return b[1]-a[1]; }).slice(0, 5);
+  var topCards = Object.entries(cardCount).sort(function(a,b){ return b[1]-a[1]; }).slice(0, 5);
+  var maxCount = topCmds.length > 0 ? topCmds[0][1] : 1;
+
+  var bannerHtml = '<div class="stat-card">' +
+    '<div class="stat-label">卡组总数</div>' +
+    '<div class="stat-value" style="font-size:28px;font-weight:800;color:var(--primary)">' + allDecks.length + '</div>' +
+    '</div>' +
+    '<div class="stat-card" style="grid-column:span 2">' +
+    '<div class="stat-label">热门统帅 Top 5</div>' +
+    '<div class="stat-value">' +
+      topCmds.map(function(c) {
+        return '<div class="commander-bar" style="margin-bottom:6px">' +
+          '<span style="min-width:100px;font-size:12.5px">' + c[0] + '</span>' +
+          '<div class="bar" style="flex:1"><div class="bar-fill" style="width:' + (c[1]/maxCount*100) + '%"></div></div>' +
+          '<span class="commander-count">' + c[1] + ' 套</span>' +
+        '</div>';
+      }).join('') +
+    '</div>' +
+    '</div>' +
+    '<div class="stat-card">' +
+    '<div class="stat-label">热门卡牌 Top 5</div>' +
+    '<div class="stat-value">' +
+      topCards.map(function(c, i) {
+        return '<div style="margin-bottom:4px"><span style="color:var(--primary);font-weight:700">' + (i+1) + '.</span> ' + c[0] + ' <span style="color:var(--text-3);font-size:11px">x' + c[1] + '</span></div>';
+      }).join('') +
+    '</div>' +
+    '</div>';
+  document.getElementById('deck-stats-banner').innerHTML = bannerHtml;
+}
+
+function applyDeckFilters() {
+  deckState.commanderFilter = document.getElementById('deck-commander-filter').value;
+  deckState.sortKey = document.getElementById('deck-sort-filter').value;
+  deckState.search = document.getElementById('deck-search').value.toLowerCase().trim();
+  deckState.pageNum = 1;
+  renderDecks();
+}
+
+function getFilteredDecks() {
+  var filtered = allDecks.filter(function(d) {
+    if (d.activity !== deckState.currentTournament) return false;
+    if (deckState.commanderFilter && d.commander.name !== deckState.commanderFilter) return false;
+    if (deckState.search) {
+      if (d.name.toLowerCase().indexOf(deckState.search) === -1 &&
+          d.player.toLowerCase().indexOf(deckState.search) === -1 &&
+          d.commander.name.toLowerCase().indexOf(deckState.search) === -1) return false;
+    }
+    return true;
+  });
+
+  var key = deckState.sortKey;
+  filtered.sort(function(a, b) {
+    if (key === 'date') return b.date - a.date;
+    if (key === 'rank') return (a.rank || 999) - (b.rank || 999);
+    if (key === 'cards') return b.cardCount - a.cardCount;
+    return 0;
+  });
+  return filtered;
+}
+
+function rankBadge(rank) {
+  if (!rank || rank > 99) return '<span class="rank-badge rank-other">第' + (rank || '-') + '名</span>';
+  var cls = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : rank <= 4 ? 'rank-4' : 'rank-other';
+  return '<span class="rank-badge ' + cls + '">第' + rank + '名</span>';
+}
+
+function renderDecks() {
+  var filtered = getFilteredDecks();
+  var totalPages = Math.ceil(filtered.length / deckState.pageSize);
+  if (deckState.pageNum > totalPages) deckState.pageNum = totalPages || 1;
+  if (deckState.pageNum < 1) deckState.pageNum = 1;
+
+  var start = (deckState.pageNum - 1) * deckState.pageSize;
+  var pageData = filtered.slice(start, start + deckState.pageSize);
+
+  document.getElementById('deck-result-count').textContent = '共 ' + filtered.length + ' 套';
+  document.getElementById('decks-badge').textContent = allDecks.length + ' 套';
+
+  if (pageData.length === 0) {
+    document.getElementById('decks-grid').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-3)">没有找到匹配的卡组</div>';
+    document.getElementById('deck-pagination').innerHTML = '';
+    return;
+  }
+
+  var html = '<div class="deck-list-container">' + pageData.map(function(d) {
+    var dateStr = new Date(d.date).toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'});
+    var mainCount = d.main.reduce(function(s, c) { return s + c.c; }, 0);
+    var sideCount = d.sideboard.reduce(function(s, c) { return s + c.c; }, 0);
+
+    // Rank badge
+    var rankCls = 'rN';
+    var rankText = '-';
+    if (d.rank && d.rank <= 99) {
+      rankCls = d.rank === 1 ? 'r1' : d.rank === 2 ? 'r2' : d.rank === 3 ? 'r3' : d.rank <= 4 ? 'r4' : 'rN';
+      rankText = d.rank <= 4 ? d.rank : '#' + d.rank;
+    }
+
+    var typeClass = d.type === '现开赛' ? '现开赛' : '构筑赛';
+
+    return '<div class="deck-list-row" onclick="showDeckDetail(' + d.id + ')">' +
+      '<div class="deck-list-rank ' + rankCls + '">' + rankText + '</div>' +
+      '<img class="deck-list-cmd" src="' + imgUrl(d.commander.img) + '" loading="lazy" onerror="this.src=\'https://placehold.co/40x56/eef0ff/6366f1?text=' + encodeURIComponent(d.commander.name.charAt(0)) + '\'">' +
+      '<div class="deck-list-info">' +
+        '<div class="deck-list-name">' + d.name + '</div>' +
+        '<div class="deck-list-sub">' +
+          '<span class="cmd-name">' + d.commander.name + '</span>' +
+          '<span>' + d.player + '</span>' +
+          '<span>' + dateStr + '</span>' +
+        '</div>' +
+      '</div>' +
+      (d.city ? '<span class="deck-list-city">' + d.city + '</span>' : '') +
+      (d.type ? '<span class="deck-list-type ' + typeClass + '">' + d.type + '</span>' : '') +
+      '<div class="deck-list-stats">' +
+        '<span><span class="num">' + mainCount + '</span> 主卡</span>' +
+        (sideCount > 0 ? '<span><span class="num">' + sideCount + '</span> 备卡</span>' : '') +
+      '</div>' +
+      '<span class="deck-list-arrow">&#8250;</span>' +
+    '</div>';
+  }).join('') + '</div>';
+
+  document.getElementById('decks-grid').innerHTML = html;
+  renderDeckPagination(filtered.length, totalPages);
+}
+
+function renderDeckPagination(total, totalPages) {
+  if (totalPages <= 1) {
+    document.getElementById('deck-pagination').innerHTML = '';
+    return;
+  }
+  var p = deckState.pageNum;
+  var html = '';
+  html += '<button class="page-btn" onclick="goDeckPage(' + (p - 1) + ')"' + (p <= 1 ? ' disabled' : '') + '>\u2039</button>';
+  var startP = Math.max(1, p - 2);
+  var endP = Math.min(totalPages, p + 2);
+  if (startP > 1) {
+    html += '<button class="page-btn" onclick="goDeckPage(1)">1</button>';
+    if (startP > 2) html += '<span class="page-info">...</span>';
+  }
+  for (var i = startP; i <= endP; i++) {
+    html += '<button class="page-btn' + (i === p ? ' active' : '') + '" onclick="goDeckPage(' + i + ')">' + i + '</button>';
+  }
+  if (endP < totalPages) {
+    if (endP < totalPages - 1) html += '<span class="page-info">...</span>';
+    html += '<button class="page-btn" onclick="goDeckPage(' + totalPages + ')">' + totalPages + '</button>';
+  }
+  html += '<button class="page-btn" onclick="goDeckPage(' + (p + 1) + ')"' + (p >= totalPages ? ' disabled' : '') + '>\u203a</button>';
+  html += '<span class="page-info">' + p + ' / ' + totalPages + '</span>';
+  document.getElementById('deck-pagination').innerHTML = html;
+}
+
+function goDeckPage(n) {
+  deckState.pageNum = n;
+  renderDecks();
+  document.getElementById('page-decks').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function showDeckDetail(id) {
+  var d = allDecks.find(function(x) { return x.id === id; });
+  if (!d) return;
+
+  var dateStr = new Date(d.date).toLocaleDateString('zh-CN', {year: 'numeric', month: 'long', day: 'numeric'});
+
+  function cardListHtml(cards) {
+    return '<div class="deck-card-list">' + cards.map(function(c) {
+      return '<div class="deck-card-item" onclick="event.stopPropagation()">' +
+        '<img src="' + imgUrl(c.u) + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+        '<span class="card-name">' + c.n + '</span>' +
+        '<span class="card-count">x' + c.c + '</span>' +
+      '</div>';
+    }).join('') + '</div>';
+  }
+
+  var mainCount = d.main.reduce(function(s, c) { return s + c.c; }, 0);
+  var terrCount = d.territory.reduce(function(s, c) { return s + c.c; }, 0);
+  var sideCount = d.sideboard.reduce(function(s, c) { return s + c.c; }, 0);
+
+  var html = '<div class="deck-detail-modal">' +
+    '<div class="deck-detail-header">' +
+      '<img class="deck-detail-commander" src="' + imgUrl(d.commander.img) + '" onerror="this.src=\'https://placehold.co/240x336/eef0ff/6366f1?text=' + encodeURIComponent(d.commander.name) + '\'">' +
+      '<div class="deck-detail-title">' +
+        '<h2>' + d.name + '</h2>' +
+        '<div class="commander-name">' + d.commander.name + '</div>' +
+        '<div class="info-row">' +
+          '<span class="info-tag">' + (d.player || '未知') + '</span>' +
+          (d.activity ? '<span class="info-tag">' + d.activity + '</span>' : '') +
+          (d.rank ? '<span class="info-tag">' + rankBadge(d.rank) + '</span>' : '') +
+          '<span class="info-tag">' + dateStr + '</span>' +
+          '<span class="info-tag">共 ' + d.cardCount + ' 张</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="deck-detail-body">' +
+      '<div class="deck-code-box">' +
+        '<span style="font-size:12px;color:var(--text-3);font-weight:600">卡组码</span>' +
+        '<span class="code">' + d.code + '</span>' +
+        '<button class="copy-btn" onclick="copyDeckCode(this, \'' + d.code + '\')">复制</button>' +
+      '</div>' +
+      '<div class="deck-section-title">主卡组 <span class="count">' + mainCount + ' 张 / ' + d.main.length + ' 种</span></div>' +
+      cardListHtml(d.main) +
+      (d.territory.length > 0 ? '<div class="deck-section-title">领土卡 <span class="count">' + terrCount + ' 张 / ' + d.territory.length + ' 种</span></div>' + cardListHtml(d.territory) : '') +
+      (d.sideboard.length > 0 ? '<div class="deck-section-title">备卡 <span class="count">' + sideCount + ' 张 / ' + d.sideboard.length + ' 种</span></div>' + cardListHtml(d.sideboard) : '') +
+    '</div>' +
+  '</div>';
+
+  var box = document.getElementById('modal-box');
+  box.className = 'modal wide deck-detail-modal';
+  box.innerHTML = html +
+    '<button class="modal-close" style="position:absolute;top:12px;right:12px;z-index:10" onclick="document.getElementById(\'modal-overlay\').classList.remove(\'show\')">\u00d7</button>';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function copyDeckCode(btn, code) {
+  navigator.clipboard.writeText(code).then(function() {
+    btn.textContent = '已复制';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = '复制';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ===== INIT =====
+renderNewsFilter();
+renderNews();
+initFilters();
+renderEvents();
+initCardFilters();
+renderCards();
+initDeckFilters();
+renderTournaments();
+</script>
+</body>
+</html>

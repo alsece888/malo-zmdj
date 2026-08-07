@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>卡组组建器 - 正面对决大本营</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #e0e7ff;
+      --primary-dark: #4338ca;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --bg-1: #ffffff;
+      --bg-2: #f1f5f9;
+      --bg-3: #e2e8f0;
+      --text: #0f172a;
+      --text-2: #475569;
+      --text-3: #94a3b8;
+      --border: #e2e8f0;
+      --radius: 14px;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    a { color: var(--primary); text-decoration: none; }
+
+    /* Header */
+    .top-header {
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; }
+    .brand-logo {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), #818cf8);
+      display: grid; place-items: center; color: #fff; font-size: 18px;
+    }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link {
+      padding: 8px 14px; border-radius: 8px; color: var(--text-2);
+      font-size: 14px; font-weight: 500; transition: .2s;
+    }
+    .nav-link:hover { background: var(--bg-2); color: var(--text); }
+
+    /* Layout */
+    .builder-container {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 320px;
+      gap: 18px;
+      padding: 18px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    @media (max-width: 1200px) {
+      .builder-container { grid-template-columns: 1fr 1fr; }
+      .stats-panel { grid-column: 1 / -1; }
+    }
+    @media (max-width: 768px) {
+      .builder-container { grid-template-columns: 1fr; }
+      .stats-panel { grid-column: auto; }
+    }
+
+    .panel {
+      background: var(--bg-1);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 120px);
+      min-height: 600px;
+    }
+    .panel-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .panel-title { font-size: 16px; font-weight: 700; margin: 0; }
+    .panel-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+    /* Search & Filters */
+    .search-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .search-input {
+      flex: 1; min-width: 160px;
+      padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 14px; outline: none; transition: .2s;
+    }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .filter-select {
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 14px; background: #fff; min-width: 110px;
+    }
+    .filter-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .filter-tag {
+      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+      background: var(--bg-2); color: var(--text-2); cursor: pointer; border: 1px solid transparent;
+      transition: .2s;
+    }
+    .filter-tag.active { background: var(--primary-light); color: var(--primary-dark); border-color: var(--primary); }
+
+    /* Card grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 12px;
+    }
+    .card-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      background: var(--bg-2);
+      aspect-ratio: 63/88;
+    }
+    .card-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .card-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card-item-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 45%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 8px; opacity: 0; transition: .2s;
+    }
+    .card-item:hover .card-item-overlay { opacity: 1; }
+    .card-item-name { color: #fff; font-size: 12px; font-weight: 700; line-height: 1.3; }
+    .card-item-meta { color: rgba(255,255,255,.8); font-size: 11px; margin-top: 2px; }
+    .card-item-cost {
+      position: absolute; top: 6px; left: 6px;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(0,0,0,.7); color: #fff;
+      display: grid; place-items: center; font-size: 12px; font-weight: 700;
+    }
+    .card-pagination { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+    .page-btn {
+      padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px;
+      background: #fff; cursor: pointer; font-size: 13px;
+    }
+    .page-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Deck panel */
+    .deck-header-input {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 15px; font-weight: 600; margin-bottom: 10px;
+    }
+    .deck-meta { display: flex; gap: 12px; font-size: 12px; color: var(--text-3); margin-bottom: 12px; }
+    .deck-section { margin-bottom: 16px; }
+    .deck-section-title {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-2);
+    }
+    .deck-count { font-weight: 700; }
+    .deck-count.ok { color: var(--success); }
+    .deck-count.warn { color: var(--warning); }
+    .deck-count.err { color: var(--danger); }
+    .deck-slot-list { display: flex; flex-direction: column; gap: 6px; }
+    /* 主牌库：4列网格 */
+    .deck-slot-list.grid-4 {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    }
+    .deck-slot-list.grid-4 .deck-slot {
+      flex-direction: column; padding: 6px; gap: 4px; text-align: center;
+      position: relative;
+    }
+    .deck-slot-list.grid-4 .deck-slot img {
+      width: 100%; height: auto; aspect-ratio: 78/110; border-radius: 6px;
+    }
+    .deck-slot-list.grid-4 .deck-slot-info { display: none; }
+    .deck-slot-list.grid-4 .deck-slot-qty {
+      justify-content: center; gap: 4px;
+    }
+    .deck-slot-list.grid-4 .deck-slot-qty .qty-btn { width: 20px; height: 20px; font-size: 11px; }
+    .deck-slot-list.grid-4 .deck-slot-qty span { font-size: 12px; min-width: 14px; }
+    .deck-slot-list.grid-4 .deck-slot-name {
+      font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .deck-slot {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 10px;
+      background: var(--bg-2); border: 1px solid transparent;
+      transition: .2s;
+    }
+    .deck-slot:hover { background: var(--bg-3); }
+    .deck-slot img {
+      width: 36px; height: 50px; border-radius: 5px; object-fit: cover;
+    }
+    .deck-slot-info { flex: 1; min-width: 0; }
+    .deck-slot-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .deck-slot-type { font-size: 11px; color: var(--text-3); }
+    .deck-slot-qty {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .qty-btn {
+      width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--border);
+      background: #fff; cursor: pointer; display: grid; place-items: center; font-size: 13px;
+    }
+    .qty-btn:hover { background: var(--primary-light); border-color: var(--primary); }
+    .deck-empty {
+      padding: 20px; text-align: center; color: var(--text-3); font-size: 13px;
+      border: 2px dashed var(--border); border-radius: 10px;
+    }
+    .validation-box {
+      padding: 10px 12px; border-radius: 10px; font-size: 12px; margin-top: 12px;
+    }
+    .validation-box.ok { background: #ecfdf5; color: #065f46; }
+    .validation-box.err { background: #fef2f2; color: #991b1b; }
+    .validation-box.warn { background: #fffbeb; color: #92400e; }
+    .validation-list { margin: 4px 0 0; padding-left: 18px; }
+    .validation-list li { margin-bottom: 2px; }
+    .deck-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .btn {
+      padding: 10px 16px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: .2s; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: var(--bg-2); color: var(--text-2); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--bg-3); }
+    .btn-danger { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+
+    /* Stats panel */
+    .stat-block { margin-bottom: 20px; }
+    .stat-label { font-size: 12px; font-weight: 700; color: var(--text-2); margin-bottom: 8px; }
+    .stat-card {
+      background: var(--bg-2); border-radius: 12px; padding: 14px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    .stat-cell { text-align: center; }
+    .stat-value { font-size: 20px; font-weight: 800; color: var(--primary); }
+    .stat-name { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .chart-container { position: relative; height: 160px; margin-top: 8px; }
+    .type-bar-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+    .type-bar-label { width: 50px; color: var(--text-2); }
+    .type-bar { flex: 1; height: 8px; background: var(--bg-3); border-radius: 4px; overflow: hidden; }
+    .type-bar-fill { height: 100%; border-radius: 4px; }
+    .type-bar-count { width: 24px; text-align: right; color: var(--text-3); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      display: none; align-items: center; justify-content: center; z-index: 200;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff; border-radius: var(--radius); width: 520px; max-width: 100%;
+      max-height: 80vh; display: flex; flex-direction: column; box-shadow: var(--shadow-lg);
+    }
+    .modal-header { padding: 16px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { padding: 16px 18px; overflow-y: auto; flex: 1; }
+    .modal-footer { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .modal textarea {
+      width: 100%; height: 220px; border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; font-family: monospace; font-size: 12px; resize: none;
+    }
+    .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-3); }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1e293b; color: #fff; padding: 12px 20px; border-radius: 10px;
+      font-size: 14px; opacity: 0; pointer-events: none; transition: .3s; z-index: 300;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Tooltip */
+    .card-preview-tooltip {
+      position: fixed; z-index: 150; pointer-events: none;
+      width: 440px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-lg);
+      display: none;
+      background: #fff;
+    }
+    .card-preview-tooltip.dual {
+      width: 900px;
+    }
+    .card-preview-tooltip img { width: 100%; display: block; }
+    .tooltip-images {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+    }
+    .tooltip-images .tooltip-img-wrap {
+      flex: 1;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .tooltip-images .tooltip-img-wrap img {
+      width: 100%;
+      display: block;
+      border-radius: 8px;
+    }
+    .tooltip-face-label {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header class="top-header">
+    <a href="index.html" class="brand">
+      <div class="brand-logo">正</div>
+      <div>正面对决大本营</div>
+    </a>
+    <nav class="nav-links">
+      <a class="nav-link" href="index.html">首页</a>
+      <a class="nav-link" href="deck-builder.html">组卡器</a>
+      <a class="nav-link" href="battle.html">对战房间</a>
+    </nav>
+  </header>
+
+  <div class="builder-container">
+    <!-- Card Browser -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">卡牌图鉴</h2>
+        <span id="browser-count" style="font-size:12px;color:var(--text-3)">0 张</span>
+      </div>
+      <div class="panel-body">
+        <div class="search-row">
+          <input type="text" class="search-input" id="card-search" placeholder="搜索名称/ID/技能/势力..." oninput="renderBrowser()">
+          <select class="filter-select" id="set-filter" onchange="renderBrowser()">
+            <option value="">全部系列</option>
+          </select>
+          <select class="filter-select" id="rarity-filter" onchange="renderBrowser()">
+            <option value="">全部稀有度</option>
+          </select>
+        </div>
+        <div class="filter-tags" id="type-tags">
+          <span class="filter-tag all-tag active" data-type="__all__" onclick="toggleTypeFilter('__all__')">全部</span>
+          <span class="filter-tag" data-type="commander" onclick="toggleTypeFilter('commander')">统帅</span>
+          <span class="filter-tag" data-type="unit" onclick="toggleTypeFilter('unit')">角色</span>
+          <span class="filter-tag" data-type="spell" onclick="toggleTypeFilter('spell')">锦囊</span>
+          <span class="filter-tag" data-type="attachment" onclick="toggleTypeFilter('attachment')">附属</span>
+          <span class="filter-tag" data-type="strategy" onclick="toggleTypeFilter('strategy')">兵法</span>
+        </div>
+        <div class="filter-tags" id="attr-tags" style="margin-top:-6px">
+          <span class="filter-tag all-tag active" data-attr="__all__" onclick="toggleAttrFilter('__all__')">全部属性</span>
+          <span class="filter-tag" data-attr="风" onclick="toggleAttrFilter('风')" style="color:#059669">风</span>
+          <span class="filter-tag" data-attr="林" onclick="toggleAttrFilter('林')" style="color:#16a34a">林</span>
+          <span class="filter-tag" data-attr="火" onclick="toggleAttrFilter('火')" style="color:#dc2626">火</span>
+          <span class="filter-tag" data-attr="山" onclick="toggleAttrFilter('山')" style="color:#a16207">山</span>
+          <span class="filter-tag" data-attr="阴" onclick="toggleAttrFilter('阴')" style="color:#6366f1">阴</span>
+          <span class="filter-tag" data-attr="雷" onclick="toggleAttrFilter('雷')" style="color:#7c3aed">雷</span>
+        </div>
+        <div class="filter-tags" id="cost-tags" style="margin-top:-6px">
+          <span class="filter-tag all-tag active" data-cost="__all__" onclick="toggleCostFilter('__all__')">全部费用</span>
+          <span class="filter-tag" data-cost="0" onclick="toggleCostFilter('0')">0费</span>
+          <span class="filter-tag" data-cost="1" onclick="toggleCostFilter('1')">1费</span>
+          <span class="filter-tag" data-cost="2" onclick="toggleCostFilter('2')">2费</span>
+          <span class="filter-tag" data-cost="3" onclick="toggleCostFilter('3')">3费</span>
+          <span class="filter-tag" data-cost="4" onclick="toggleCostFilter('4')">4费</span>
+          <span class="filter-tag" data-cost="5" onclick="toggleCostFilter('5')">5费</span>
+          <span class="filter-tag" data-cost="6" onclick="toggleCostFilter('6')">6费</span>
+          <span class="filter-tag" data-cost="7" onclick="toggleCostFilter('7')">7费</span>
+          <span class="filter-tag" data-cost="8" onclick="toggleCostFilter('8')">8费</span>
+        </div>
+        <div class="card-grid" id="card-grid"></div>
+        <div class="card-pagination" id="card-pagination"></div>
+      </div>
+    </section>
+
+    <!-- Deck Builder -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">我的卡组</h2>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" onclick="importDeck()">导入</button>
+          <button class="btn btn-secondary" onclick="exportDeck()">导出</button>
+          <button class="btn btn-primary" onclick="saveDeck()">保存</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <input type="text" class="deck-header-input" id="deck-name" placeholder="输入卡组名称...">
+        <div class="deck-meta">
+          <span id="deck-total-cards">卡组总数: 0</span>
+          <span id="deck-created">未保存</span>
+        </div>
+
+        <div class="deck-section">
+          <div class="deck-section-title">
+            <span>统帅 <span class="deck-count err" id="commander-count">0/1</span></span>
+            <span style="font-size:11px;color:var(--text-3)">必须且只能放 1 张</span>
+          </div>
+          <div class="deck-slot-list" id="commander-list"></div>
+        </div>
+
+        <div class="deck-section">
+          <div class="deck-section-title">
+            <span>主牌库 <span class="deck-count err" id="main-count">0/40</span></span>
+            <span style="font-size:11px;color:var(--text-3)">角色 / 锦囊 / 附属</span>
+          </div>
+          <div class="deck-slot-list grid-4" id="main-list"></div>
+        </div>
+
+        <div class="deck-section">
+          <div class="deck-section-title">
+            <span>兵法牌库 <span class="deck-count err" id="rune-count">0/12</span></span>
+            <span style="font-size:11px;color:var(--text-3)">仅兵法·不受同名3张限制</span>
+          </div>
+          <div class="deck-slot-list" id="rune-list"></div>
+        </div>
+
+        <div class="validation-box err" id="validation-box">
+          <strong>卡组未达标</strong>
+          <ul class="validation-list" id="validation-list"></ul>
+        </div>
+
+        <div class="deck-actions">
+          <button class="btn btn-secondary" onclick="loadSavedDecks()">读取本地卡组</button>
+          <button class="btn btn-secondary" onclick="clearDeck()">清空</button>
+          <button class="btn btn-danger" onclick="deleteCurrentDeck()">删除当前</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="panel stats-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">统计面板</h2>
+      </div>
+      <div class="panel-body">
+        <div class="stat-block">
+          <div class="stat-label">卡组构成</div>
+          <div class="stat-card">
+            <div class="stat-cell"><div class="stat-value" id="stat-commander">0</div><div class="stat-name">统帅</div></div>
+            <div class="stat-cell"><div class="stat-value" id="stat-main">0</div><div class="stat-name">主牌</div></div>
+            <div class="stat-cell"><div class="stat-value" id="stat-rune">0</div><div class="stat-name">兵法</div></div>
+          </div>
+        </div>
+
+        <div class="stat-block">
+          <div class="stat-label">卡牌类型分布</div>
+          <div id="type-distribution"></div>
+        </div>
+
+        <div class="stat-block">
+          <div class="stat-label">属性分布</div>
+          <div id="attr-distribution"></div>
+        </div>
+
+        <div class="stat-block">
+          <div class="stat-label">费用曲线</div>
+          <div class="chart-container">
+            <canvas id="cost-curve-chart"></canvas>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:6px;text-align:center">
+            平均费用: <strong id="avg-cost">0.0</strong>
+          </div>
+        </div>
+
+        <div class="stat-block">
+          <div class="stat-label">稀有度分布</div>
+          <div id="rarity-distribution"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">标题</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer" id="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- Saved Decks Modal -->
+  <div class="modal-overlay" id="saved-decks-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>本地卡组</h3>
+        <button class="close-btn" onclick="closeSavedDecksModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="saved-decks-list"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeSavedDecksModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="card-preview-tooltip" id="tooltip">
+    <div class="tooltip-images" id="tooltip-images"></div>
+  </div>
+
+  <script src="cards_data.js"></script>
+  <script>
+    // ===== Data & State =====
+    const ALL_CARDS = (window.CARD_DATA && window.CARD_DATA.cards) || [];
+    const cardMap = new Map(ALL_CARDS.map(c => [c.id, c]));
+    const DECK_STORAGE_KEY = 'zmdj_saved_decks';
+    const CURRENT_DECK_KEY = 'zmdj_current_deck';
+
+    let state = {
+      search: '',
+      typeFilter: [],
+      attrFilter: [],
+      costFilter: [],
+      setFilter: '',
+      rarityFilter: '',
+      page: 1,
+      pageSize: 24,
+      deck: {
+        id: generateId(),
+        name: '',
+        commander: null, // { cardId, count }
+        main: [],        // [{ cardId, count }]
+        runes: [],       // [{ cardId, count }]
+        updatedAt: null
+      }
+    };
+
+    const TYPE_MAIN = ['unit', 'spell', 'attachment'];
+    const TYPE_RUNE = ['strategy'];
+    const VALIDATION_RULES = {
+      commander: { min: 1, max: 1, label: '统帅' },
+      main: { min: 40, max: 40, label: '主牌库' },
+      runes: { min: 12, max: 12, label: '兵法牌库' }
+    };
+
+    let costChart = null;
+    let attrChart = null;
+
+    // ===== Helpers =====
+    function generateId() {
+      return 'deck_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
+    }
+
+    function imgUrl(card) {
+      if (!card) return '';
+      if (card.imageUrl) return card.imageUrl;
+      if (card.localImage) return card.localImage;
+      return '';
+    }
+
+    function getCard(id) { return cardMap.get(id); }
+
+    function getNameCount(deckSection, cardId) {
+      let total = 0;
+      if (state.deck.commander && state.deck.commander.cardId === cardId) total += state.deck.commander.count;
+      for (const item of state.deck.main) if (item.cardId === cardId) total += item.count;
+      for (const item of state.deck.runes) if (item.cardId === cardId) total += item.count;
+      return total;
+    }
+
+    function getTotalCount(section) {
+      if (!section) return 0;
+      if (Array.isArray(section)) return section.reduce((s, i) => s + i.count, 0);
+      return section.count || 0;
+    }
+
+    function getCardTypeLabel(type) {
+      const map = { commander: '统帅', unit: '角色', spell: '锦囊', attachment: '附属', strategy: '兵法', token: '标记', unknown: '未知' };
+      return map[type] || type;
+    }
+
+    function getAttrColor(attr) {
+      const map = { '风': '#059669', '林': '#16a34a', '火': '#dc2626', '山': '#a16207', '阴': '#6366f1', '雷': '#7c3aed', '无': '#9ca3af' };
+      return map[attr] || '#9ca3af';
+    }
+
+    function getRarityLabel(r) {
+      const map = { C: '普通', UC: '优通', R: '稀有', SR: '超稀有', SSR: '特级稀有', CR: '闪稀有', L: '传说', UR: '极稀有', LR: '闪传说', PR: ' Promo' };
+      return map[r] || r || '未知';
+    }
+
+    function getRarityColor(r) {
+      const map = { C: '#9ca3af', UC: '#60a5fa', R: '#a855f7', SR: '#ec4899', SSR: '#f43f5e', CR: '#8b5cf6', L: '#f59e0b', UR: '#ef4444', LR: '#f97316', PR: '#14b8a6' };
+      return map[r] || '#9ca3af';
+    }
+
+    function showToast(text) {
+      const t = document.getElementById('toast');
+      t.textContent = text;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // ===== Browser Rendering =====
+    function initFilters() {
+      const packs = [...new Set(ALL_CARDS.map(c => c.pack).filter(Boolean))].sort();
+      const rarities = [...new Set(ALL_CARDS.map(c => c.rarity).filter(Boolean))].sort();
+      const setSel = document.getElementById('set-filter');
+      const rareSel = document.getElementById('rarity-filter');
+      packs.forEach(s => setSel.innerHTML += `<option value="${s}">${s}</option>`);
+      rarities.forEach(r => rareSel.innerHTML += `<option value="${r}">${getRarityLabel(r)} (${r})</option>`);
+    }
+
+    function toggleTypeFilter(type) {
+      state.page = 1;
+      if (type === '__all__') {
+        state.typeFilter = [];
+      } else {
+        var idx = state.typeFilter.indexOf(type);
+        if (idx >= 0) state.typeFilter.splice(idx, 1);
+        else state.typeFilter.push(type);
+      }
+      refreshTypeTags();
+      renderBrowser();
+    }
+
+    function toggleAttrFilter(attr) {
+      state.page = 1;
+      if (attr === '__all__') {
+        state.attrFilter = [];
+      } else {
+        var idx = state.attrFilter.indexOf(attr);
+        if (idx >= 0) state.attrFilter.splice(idx, 1);
+        else state.attrFilter.push(attr);
+      }
+      refreshAttrTags();
+      renderBrowser();
+    }
+
+    function toggleCostFilter(cost) {
+      state.page = 1;
+      if (cost === '__all__') {
+        state.costFilter = [];
+      } else {
+        var idx = state.costFilter.indexOf(cost);
+        if (idx >= 0) state.costFilter.splice(idx, 1);
+        else state.costFilter.push(cost);
+      }
+      refreshCostTags();
+      renderBrowser();
+    }
+
+    function refreshTypeTags() {
+      var empty = state.typeFilter.length === 0;
+      document.querySelectorAll('#type-tags .filter-tag').forEach(function(el) {
+        if (el.dataset.type === '__all__') {
+          el.classList.toggle('active', empty);
+        } else {
+          el.classList.toggle('active', state.typeFilter.indexOf(el.dataset.type) >= 0);
+        }
+      });
+    }
+
+    function refreshAttrTags() {
+      var empty = state.attrFilter.length === 0;
+      document.querySelectorAll('#attr-tags .filter-tag').forEach(function(el) {
+        if (el.dataset.attr === '__all__') {
+          el.classList.toggle('active', empty);
+        } else {
+          el.classList.toggle('active', state.attrFilter.indexOf(el.dataset.attr) >= 0);
+        }
+      });
+    }
+
+    function refreshCostTags() {
+      var empty = state.costFilter.length === 0;
+      document.querySelectorAll('#cost-tags .filter-tag').forEach(function(el) {
+        if (el.dataset.cost === '__all__') {
+          el.classList.toggle('active', empty);
+        } else {
+          el.classList.toggle('active', state.costFilter.indexOf(el.dataset.cost) >= 0);
+        }
+      });
+    }
+
+    function getFilteredCards() {
+      const term = state.search.toLowerCase().trim();
+      return ALL_CARDS.filter(c => {
+        if (state.typeFilter.length > 0 && state.typeFilter.indexOf(c.type) === -1) return false;
+        if (state.attrFilter.length > 0 && state.attrFilter.indexOf(c.attribute) === -1) return false;
+        if (state.costFilter.length > 0 && state.costFilter.indexOf(String(c.cost)) === -1) return false;
+        if (state.setFilter && c.pack !== state.setFilter) return false;
+        if (state.rarityFilter && c.rarity !== state.rarityFilter) return false;
+        if (term) {
+          return c.name.toLowerCase().includes(term) || c.id.toLowerCase().includes(term) ||
+                 (c.subType || '').toLowerCase().includes(term) || (c.skillText || '').toLowerCase().includes(term);
+        }
+        return true;
+      }).filter(c => {
+        if (c.type === 'token') return false;
+        // 如果筛选了统帅（单独或多项选中之一），过滤觉醒面+无图卡
+        if (state.typeFilter.length > 0 && state.typeFilter.indexOf('commander') >= 0) {
+          if (c.id.endsWith('*') || c.id.endsWith('-1')) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderBrowser() {
+      state.search = document.getElementById('card-search').value;
+      state.setFilter = document.getElementById('set-filter').value;
+      state.rarityFilter = document.getElementById('rarity-filter').value;
+      const cards = getFilteredCards();
+      const total = cards.length;
+      const start = (state.page - 1) * state.pageSize;
+      const pageCards = cards.slice(start, start + state.pageSize);
+      const grid = document.getElementById('card-grid');
+      document.getElementById('browser-count').textContent = total + ' 张';
+
+      if (pageCards.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-3)">没有找到匹配的卡牌</div>';
+      } else {
+        grid.innerHTML = pageCards.map(c => {
+          const inDeckCount = getNameCount(null, c.id);
+          const costText = c.cost > 0 ? c.cost : '0';
+          const attrColor = getAttrColor(c.attribute);
+          const statsHtml = c.type === 'unit' || c.type === 'commander'
+            ? `<span style="color:#ef4444">武${c.power}</span> <span style="color:#3b82f6">射${c.range}</span>`
+            : c.type === 'spell' ? '<span style="color:#8b5cf6">锦囊</span>'
+            : c.type === 'attachment' ? '<span style="color:#10b981">附属</span>'
+            : c.type === 'strategy' ? '<span style="color:#f59e0b">兵法</span>' : '';
+          return `<div class="card-item" onclick="addCard('${c.id}')" onmouseenter="showTooltip(event,'${c.id}')" onmouseleave="hideTooltip()">
+            <div class="card-item-cost" style="background:${attrColor}">${costText}</div>
+            <img src="${imgUrl(c)}" loading="lazy" alt="${c.name}" onerror="this.style.display='none';this.parentElement.innerHTML+='<div style=\\'display:flex;height:100%;align-items:center;justify-content:center;color:var(--text-3);font-size:12px;text-align:center;padding:8px\\'>${c.name}</div>'">
+            <div class="card-item-overlay">
+              <div class="card-item-name">${c.name}</div>
+              <div class="card-item-meta">${getCardTypeLabel(c.type)} · ${c.attribute} · ${statsHtml}${inDeckCount ? ' · ×' + inDeckCount : ''}</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+      renderPagination(total);
+    }
+
+    function renderPagination(total) {
+      const pages = Math.ceil(total / state.pageSize) || 1;
+      const wrap = document.getElementById('card-pagination');
+      let html = `<button class="page-btn" onclick="changePage(${state.page - 1})" ${state.page === 1 ? 'disabled' : ''}>上一页</button>`;
+      for (let i = 1; i <= pages; i++) {
+        if (i === 1 || i === pages || (i >= state.page - 1 && i <= state.page + 1)) {
+          html += `<button class="page-btn ${i === state.page ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        } else if (i === state.page - 2 || i === state.page + 2) {
+          html += `<span style="color:var(--text-3);padding:0 4px">...</span>`;
+        }
+      }
+      html += `<button class="page-btn" onclick="changePage(${state.page + 1})" ${state.page === pages ? 'disabled' : ''}>下一页</button>`;
+      wrap.innerHTML = html;
+    }
+
+    function changePage(p) {
+      const total = getFilteredCards().length;
+      const pages = Math.ceil(total / state.pageSize) || 1;
+      state.page = Math.max(1, Math.min(pages, p));
+      renderBrowser();
+    }
+
+    function getFlipCard(card) {
+      if (!card || card.type !== 'commander') return null;
+      // 尝试查找觉醒面：id + '*' 或 id + '-1'
+      let flip = getCard(card.id + '*');
+      if (flip) return flip;
+      flip = getCard(card.id + '-1');
+      if (flip) return flip;
+      // 如果当前是觉醒面，查找正面
+      if (card.id.endsWith('*')) return getCard(card.id.replace(/\*$/, ''));
+      if (card.id.endsWith('-1')) return getCard(card.id.replace(/-1$/, ''));
+      return null;
+    }
+
+    function showTooltip(e, cardId) {
+      const c = getCard(cardId);
+      if (!c) return;
+      const t = document.getElementById('tooltip');
+      const imagesWrap = document.getElementById('tooltip-images');
+      const flip = getFlipCard(c);
+
+      // 构建图片内容（仅卡面，无文字）
+      if (c.type === 'commander' && flip) {
+        t.classList.add('dual');
+        imagesWrap.innerHTML = `
+          <div class="tooltip-img-wrap">
+            <img src="${imgUrl(c)}" alt="${c.name}" onerror="this.style.display='none'">
+          </div>
+          <div class="tooltip-img-wrap">
+            <img src="${imgUrl(flip)}" alt="${flip.name}" onerror="this.style.display='none'">
+          </div>
+        `;
+      } else {
+        t.classList.remove('dual');
+        imagesWrap.innerHTML = `
+          <div class="tooltip-img-wrap">
+            <img src="${imgUrl(c)}" alt="${c.name}" onerror="this.style.display='none'">
+          </div>
+        `;
+      }
+
+      // 移除文字 overlay（如有）
+      let overlay = t.querySelector('.tooltip-info');
+      if (overlay) t.removeChild(overlay);
+
+      t.style.display = 'block';
+      positionTooltip(e);
+    }
+
+    function hideTooltip() {
+      const t = document.getElementById('tooltip');
+      t.style.display = 'none';
+      t.classList.remove('dual');
+    }
+
+    function positionTooltip(e) {
+      const t = document.getElementById('tooltip');
+      const x = e.clientX + 16;
+      const y = e.clientY - 100;
+      const rect = t.getBoundingClientRect();
+      let fx = x;
+      let fy = y;
+      if (fx + rect.width > window.innerWidth) fx = e.clientX - rect.width - 16;
+      if (fy < 0) fy = 16;
+      if (fy + rect.height > window.innerHeight) fy = window.innerHeight - rect.height - 16;
+      t.style.left = fx + 'px';
+      t.style.top = fy + 'px';
+    }
+
+    // ===== Deck Operations =====
+    function addCard(cardId) {
+      const c = getCard(cardId);
+      if (!c) return;
+
+      // 统帅
+      if (c.type === 'commander') {
+        if (state.deck.commander) {
+          showToast('统帅只能有 1 张');
+          return;
+        }
+        state.deck.commander = { cardId, count: 1 };
+        showToast(`已添加统帅：${c.name}`);
+        updateAll();
+        return;
+      }
+
+      // 同名卡上限 3（兵法牌不受此限制）
+      if (c.type !== 'strategy') {
+        const currentCount = getNameCount(null, cardId);
+        if (currentCount >= 3) {
+          showToast('同名卡最多 3 张（兵法牌除外）');
+          return;
+        }
+      }
+
+      // 兵法牌库
+      if (c.type === 'strategy') {
+        const total = getTotalCount(state.deck.runes);
+        if (total >= 12) {
+          showToast('兵法牌库已满 (12张)');
+          return;
+        }
+        const existing = state.deck.runes.find(i => i.cardId === cardId);
+        if (existing) existing.count++;
+        else state.deck.runes.push({ cardId, count: 1 });
+        showToast(`已添加兵法：${c.name}`);
+        updateAll();
+        return;
+      }
+
+      // 主牌库
+      if (TYPE_MAIN.includes(c.type)) {
+        const total = getTotalCount(state.deck.main);
+        if (total >= 40) {
+          showToast('主牌库已满 (40张)');
+          return;
+        }
+        const existing = state.deck.main.find(i => i.cardId === cardId);
+        if (existing) existing.count++;
+        else state.deck.main.push({ cardId, count: 1 });
+        showToast(`已添加：${c.name}`);
+        updateAll();
+        return;
+      }
+
+      showToast('该卡牌类型无法加入卡组');
+    }
+
+    function removeCard(section, cardId, all) {
+      let arr;
+      if (section === 'commander') {
+        state.deck.commander = null;
+        updateAll();
+        return;
+      }
+      arr = section === 'main' ? state.deck.main : state.deck.runes;
+      const idx = arr.findIndex(i => i.cardId === cardId);
+      if (idx === -1) return;
+      if (all) arr.splice(idx, 1);
+      else {
+        arr[idx].count--;
+        if (arr[idx].count <= 0) arr.splice(idx, 1);
+      }
+      updateAll();
+    }
+
+    function clearDeck() {
+      if (!confirm('确定要清空当前卡组吗？')) return;
+      state.deck.commander = null;
+      state.deck.main = [];
+      state.deck.runes = [];
+      state.deck.name = '';
+      state.deck.id = generateId();
+      document.getElementById('deck-name').value = '';
+      updateAll();
+      showToast('卡组已清空');
+    }
+
+    function renderDeckSection() {
+      // Commander
+      const cmdList = document.getElementById('commander-list');
+      if (state.deck.commander) {
+        const c = getCard(state.deck.commander.cardId);
+        cmdList.innerHTML = renderSlot(c, 'commander', state.deck.commander, true);
+      } else {
+        cmdList.innerHTML = '<div class="deck-empty">点击左侧统帅卡牌添加</div>';
+      }
+
+      // Main
+      const mainList = document.getElementById('main-list');
+      if (state.deck.main.length === 0) {
+        mainList.innerHTML = '<div class="deck-empty">点击左侧角色/锦囊/附属卡牌添加</div>';
+      } else {
+        mainList.innerHTML = state.deck.main.map(i => renderSlot(getCard(i.cardId), 'main', i)).join('');
+      }
+
+      // Runes
+      const runeList = document.getElementById('rune-list');
+      if (state.deck.runes.length === 0) {
+        runeList.innerHTML = '<div class="deck-empty">点击左侧兵法卡牌添加</div>';
+      } else {
+        runeList.innerHTML = state.deck.runes.map(i => renderSlot(getCard(i.cardId), 'runes', i)).join('');
+      }
+
+      // Counts
+      const cmdCount = state.deck.commander ? 1 : 0;
+      const mainCount = getTotalCount(state.deck.main);
+      const runeCount = getTotalCount(state.deck.runes);
+
+      updateCountBadge('commander-count', cmdCount, 1, 1);
+      updateCountBadge('main-count', mainCount, 40, 40);
+      updateCountBadge('rune-count', runeCount, 12, 12);
+
+      document.getElementById('deck-total-cards').textContent = `卡组总数: ${cmdCount + mainCount + runeCount}`;
+    }
+
+    function renderSlot(card, section, item, isCommander) {
+      if (!card) return '';
+      const attrBadge = card.attribute && card.attribute !== '无'
+        ? `<span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:${getAttrColor(card.attribute)};font-size:9px;color:#fff;text-align:center;line-height:16px;margin-right:4px">${card.attribute}</span>` : '';
+      const statsStr = (card.type === 'unit' || card.type === 'commander')
+        ? `武${card.power} 射${card.range}` : '';
+      const isGrid = (section === 'main'); // 主牌库用网格模式
+      if (isGrid) {
+        return `<div class="deck-slot">
+          <img src="${imgUrl(card)}" alt="${card.name}" onerror="this.style.visibility='hidden'">
+          <div class="deck-slot-name">${card.name}</div>
+          <div class="deck-slot-qty">
+            <button class="qty-btn" onclick="removeCard('${section}','${card.id}',false)" title="减少">-</button>
+            <span style="font-weight:700;font-size:12px;min-width:14px;text-align:center">${item.count}</span>
+            <button class="qty-btn" onclick="addCard('${card.id}')" title="增加">+</button>
+            <button class="qty-btn" onclick="removeCard('${section}','${card.id}',true)" title="全部移除">×</button>
+          </div>
+        </div>`;
+      }
+      return `<div class="deck-slot">
+        <img src="${imgUrl(card)}" alt="${card.name}" onerror="this.style.visibility='hidden'">
+        <div class="deck-slot-info">
+          <div class="deck-slot-name">${card.name}</div>
+          <div class="deck-slot-type">${attrBadge}${getCardTypeLabel(card.type)} · 费${card.cost}${statsStr ? ' · ' + statsStr : ''}</div>
+        </div>
+        ${isCommander
+          ? `<button class="qty-btn" onclick="removeCard('commander','${card.id}',true)" title="移除">×</button>`
+          : `<div class="deck-slot-qty">
+              <button class="qty-btn" onclick="removeCard('${section}','${card.id}',false)" title="减少">-</button>
+              <span style="font-weight:700;font-size:13px;min-width:18px;text-align:center">${item.count}</span>
+              <button class="qty-btn" onclick="addCard('${card.id}')" title="增加">+</button>
+              <button class="qty-btn" style="margin-left:4px" onclick="removeCard('${section}','${card.id}',true)" title="全部移除">×</button>
+            </div>`}
+      </div>`;
+    }
+
+    function updateCountBadge(id, value, min, max) {
+      const el = document.getElementById(id);
+      el.textContent = value + '/' + max;
+      el.className = 'deck-count ' + (value === min && value === max ? 'ok' : (value > max ? 'err' : (value >= min ? 'warn' : 'err')));
+    }
+
+    // ===== Validation =====
+    function validateDeck() {
+      const errors = [];
+      const warnings = [];
+      const cmdCount = state.deck.commander ? 1 : 0;
+      const mainCount = getTotalCount(state.deck.main);
+      const runeCount = getTotalCount(state.deck.runes);
+
+      if (cmdCount !== 1) errors.push('统帅必须且只能放 1 张');
+      if (mainCount !== 40) errors.push(`主牌库需要恰好 40 张（当前 ${mainCount} 张）`);
+      if (runeCount !== 12) errors.push(`兵法牌库需要恰好 12 张（当前 ${runeCount} 张）`);
+
+      // 检查主牌库中是否有非法类型
+      for (const item of state.deck.main) {
+        const c = getCard(item.cardId);
+        if (!c) continue;
+        if (!TYPE_MAIN.includes(c.type)) errors.push(`主牌库中不能放入 ${getCardTypeLabel(c.type)}：${c.name}`);
+      }
+      // 检查兵法牌库中是否有非法类型
+      for (const item of state.deck.runes) {
+        const c = getCard(item.cardId);
+        if (!c) continue;
+        if (!TYPE_RUNE.includes(c.type)) errors.push(`兵法牌库中只能放入兵法：${c.name}`);
+      }
+
+      // 同名卡上限（兵法牌不受此限制）
+      const nameCounts = {};
+      function add(id, count) { nameCounts[id] = (nameCounts[id] || 0) + count; }
+      if (state.deck.commander) add(state.deck.commander.cardId, state.deck.commander.count);
+      for (const i of state.deck.main) add(i.cardId, i.count);
+      // 兵法牌库不计入同名卡上限
+      for (const [cardId, count] of Object.entries(nameCounts)) {
+        if (count > 3) {
+          const c = getCard(cardId);
+          errors.push(`同名卡「${c ? c.name : cardId}」超过 3 张（当前 ${count} 张）`);
+        }
+      }
+
+      // 属性需求警告
+      if (state.deck.commander) {
+        const cmd = getCard(state.deck.commander.cardId);
+        if (cmd && cmd.skillText && cmd.skillText.includes('觉醒')) {
+          // 检查是否有足够的同属性卡来觉醒
+          const cmdAttr = cmd.attribute;
+          const attrCount = getDeckCardsFlat().filter(c => c.attribute === cmdAttr && c.type !== 'commander').length;
+          if (attrCount < 3) {
+            warnings.push(`统帅「${cmd.name}」觉醒需要${cmdAttr}属性卡，当前仅 ${attrCount} 张`);
+          }
+        }
+      }
+
+      return { ok: errors.length === 0, errors, warnings };
+    }
+
+    function renderValidation() {
+      const box = document.getElementById('validation-box');
+      const v = validateDeck();
+      let html = '';
+      if (v.ok) {
+        box.className = 'validation-box ok';
+        html = '<strong>✓ 卡组合法</strong> 可以进行对战';
+        if (v.warnings.length > 0) {
+          html += '<ul class="validation-list" style="color:#92400e;margin-top:4px">' + v.warnings.map(w => `<li>${w}</li>`).join('') + '</ul>';
+        }
+      } else {
+        box.className = 'validation-box err';
+        html = '<strong>卡组未达标</strong><ul class="validation-list">' + v.errors.map(e => `<li>${e}</li>`).join('') + '</ul>';
+        if (v.warnings.length > 0) {
+          html += '<ul class="validation-list" style="color:#92400e">' + v.warnings.map(w => `<li>${w}</li>`).join('') + '</ul>';
+        }
+      }
+      box.innerHTML = html;
+    }
+
+    // ===== Statistics =====
+    function updateStatistics() {
+      const cmdCount = state.deck.commander ? 1 : 0;
+      const mainCount = getTotalCount(state.deck.main);
+      const runeCount = getTotalCount(state.deck.runes);
+      document.getElementById('stat-commander').textContent = cmdCount;
+      document.getElementById('stat-main').textContent = mainCount;
+      document.getElementById('stat-rune').textContent = runeCount;
+
+      renderTypeDistribution();
+      renderAttrDistribution();
+      renderCostCurve();
+      renderRarityDistribution();
+    }
+
+    function getDeckCardsFlat() {
+      const list = [];
+      if (state.deck.commander) {
+        const c = getCard(state.deck.commander.cardId);
+        if (c) list.push(c);
+      }
+      for (const item of state.deck.main) {
+        const c = getCard(item.cardId);
+        if (c) for (let i = 0; i < item.count; i++) list.push(c);
+      }
+      for (const item of state.deck.runes) {
+        const c = getCard(item.cardId);
+        if (c) for (let i = 0; i < item.count; i++) list.push(c);
+      }
+      return list;
+    }
+
+    function renderTypeDistribution() {
+      const cards = getDeckCardsFlat();
+      const counts = {};
+      for (const c of cards) counts[c.type] = (counts[c.type] || 0) + 1;
+      const types = ['commander', 'unit', 'spell', 'attachment', 'strategy'];
+      const colors = { commander: '#f59e0b', unit: '#ef4444', spell: '#3b82f6', attachment: '#8b5cf6', strategy: '#10b981' };
+      const wrap = document.getElementById('type-distribution');
+      wrap.innerHTML = types.map(t => {
+        const n = counts[t] || 0;
+        const pct = cards.length ? Math.round(n / cards.length * 100) : 0;
+        return `<div class="type-bar-wrap">
+          <div class="type-bar-label">${getCardTypeLabel(t)}</div>
+          <div class="type-bar"><div class="type-bar-fill" style="width:${pct}%;background:${colors[t]}"></div></div>
+          <div class="type-bar-count">${n}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function renderAttrDistribution() {
+      const cards = getDeckCardsFlat().filter(c => c.type !== 'commander');
+      const counts = {};
+      for (const c of cards) counts[c.attribute] = (counts[c.attribute] || 0) + 1;
+      const attrs = ['风', '林', '火', '山', '阴', '雷', '无'];
+      const wrap = document.getElementById('attr-distribution');
+      if (!wrap) return;
+      wrap.innerHTML = attrs.map(a => {
+        const n = counts[a] || 0;
+        const pct = cards.length ? Math.round(n / cards.length * 100) : 0;
+        return `<div class="type-bar-wrap">
+          <div class="type-bar-label" style="color:${getAttrColor(a)}">${a}</div>
+          <div class="type-bar"><div class="type-bar-fill" style="width:${pct}%;background:${getAttrColor(a)}"></div></div>
+          <div class="type-bar-count">${n}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function renderCostCurve() {
+      const cards = getDeckCardsFlat();
+      const costMap = {};
+      let totalCost = 0;
+      let costCards = 0;
+      for (const c of cards) {
+        if (c.type === 'commander') continue;
+        const cost = typeof c.cost === 'number' ? c.cost : 0;
+        costMap[cost] = (costMap[cost] || 0) + 1;
+        totalCost += cost;
+        costCards++;
+      }
+      const maxCost = Math.max(8, ...Object.keys(costMap).map(Number));
+      const labels = [];
+      const data = [];
+      for (let i = 0; i <= maxCost; i++) {
+        labels.push(i + '');
+        data.push(costMap[i] || 0);
+      }
+
+      document.getElementById('avg-cost').textContent = costCards ? (totalCost / costCards).toFixed(1) : '0.0';
+
+      const ctx = document.getElementById('cost-curve-chart').getContext('2d');
+      if (costChart) costChart.destroy();
+      costChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: '卡牌数量',
+            data,
+            backgroundColor: '#4f46e5',
+            borderRadius: 4,
+            barThickness: 14
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 10 } }, grid: { color: '#e2e8f0' } },
+            x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderRarityDistribution() {
+      const cards = getDeckCardsFlat();
+      const counts = {};
+      for (const c of cards) counts[c.rarity] = (counts[c.rarity] || 0) + 1;
+      const order = ['C', 'UC', 'R', 'SR', 'SSR', 'CR', 'L', 'UR', 'LR', 'PR'];
+      const wrap = document.getElementById('rarity-distribution');
+      wrap.innerHTML = order.filter(r => counts[r]).map(r => {
+        const n = counts[r] || 0;
+        const pct = cards.length ? Math.round(n / cards.length * 100) : 0;
+        return `<div class="type-bar-wrap">
+          <div class="type-bar-label" style="color:${getRarityColor(r)}">${getRarityLabel(r)}</div>
+          <div class="type-bar"><div class="type-bar-fill" style="width:${pct}%;background:${getRarityColor(r)}"></div></div>
+          <div class="type-bar-count">${n}</div>
+        </div>`;
+      }).join('') || '<div style="font-size:12px;color:var(--text-3)">暂无卡牌</div>';
+    }
+
+    // ===== Save / Load =====
+    function getSavedDecks() {
+      try { return JSON.parse(localStorage.getItem(DECK_STORAGE_KEY) || '[]'); }
+      catch (e) { return []; }
+    }
+
+    function saveDeck() {
+      const name = document.getElementById('deck-name').value.trim();
+      if (!name) { showToast('请输入卡组名称'); return; }
+      const v = validateDeck();
+      if (!v.ok) { showToast('卡组未达标，无法保存'); return; }
+
+      state.deck.name = name;
+      state.deck.updatedAt = Date.now();
+
+      const decks = getSavedDecks();
+      const idx = decks.findIndex(d => d.id === state.deck.id);
+      if (idx >= 0) decks[idx] = { ...state.deck };
+      else decks.push({ ...state.deck });
+
+      localStorage.setItem(DECK_STORAGE_KEY, JSON.stringify(decks));
+      localStorage.setItem(CURRENT_DECK_KEY, JSON.stringify(state.deck));
+      document.getElementById('deck-created').textContent = '已保存 ' + new Date(state.deck.updatedAt).toLocaleString();
+      showToast('卡组已保存到本地');
+    }
+
+    function loadSavedDecks() {
+      const decks = getSavedDecks();
+      const list = document.getElementById('saved-decks-list');
+      if (decks.length === 0) {
+        list.innerHTML = '<p style="text-align:center;color:var(--text-3);padding:20px">暂无本地卡组</p>';
+      } else {
+        list.innerHTML = decks.map(d => {
+          const main = d.main.reduce((s, i) => s + i.count, 0);
+          const runes = d.runes.reduce((s, i) => s + i.count, 0);
+          return `<div style="padding:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700;font-size:14px">${d.name}</div>
+              <div style="font-size:12px;color:var(--text-3)">统帅${d.commander ? 1 : 0} · 主卡${main} · 兵法${runes}</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" style="padding:6px 12px" onclick="loadDeckById('${d.id}')">读取</button>
+              <button class="btn btn-danger" style="padding:6px 12px" onclick="deleteDeckById('${d.id}')">删除</button>
+            </div>
+          </div>`;
+        }).join('');
+      }
+      document.getElementById('saved-decks-modal').classList.add('active');
+    }
+
+    function closeSavedDecksModal() {
+      document.getElementById('saved-decks-modal').classList.remove('active');
+    }
+
+    function loadDeckById(id) {
+      const decks = getSavedDecks();
+      const d = decks.find(x => x.id === id);
+      if (!d) return;
+      state.deck = JSON.parse(JSON.stringify(d));
+      document.getElementById('deck-name').value = state.deck.name || '';
+      document.getElementById('deck-created').textContent = state.deck.updatedAt ? '上次保存 ' + new Date(state.deck.updatedAt).toLocaleString() : '未保存';
+      updateAll();
+      closeSavedDecksModal();
+      showToast('卡组已读取');
+    }
+
+    function deleteDeckById(id) {
+      if (!confirm('确定删除该卡组？')) return;
+      let decks = getSavedDecks();
+      decks = decks.filter(d => d.id !== id);
+      localStorage.setItem(DECK_STORAGE_KEY, JSON.stringify(decks));
+      loadSavedDecks();
+      if (state.deck.id === id) {
+        state.deck = { id: generateId(), name: '', commander: null, main: [], runes: [], updatedAt: null };
+        document.getElementById('deck-name').value = '';
+        updateAll();
+      }
+      showToast('卡组已删除');
+    }
+
+    function deleteCurrentDeck() {
+      if (!state.deck.name && !state.deck.commander && state.deck.main.length === 0 && state.deck.runes.length === 0) {
+        showToast('当前没有卡组'); return;
+      }
+      deleteDeckById(state.deck.id);
+    }
+
+    function exportDeck() {
+      const payload = JSON.stringify(state.deck, null, 2);
+      showModal('导出卡组代码', `<textarea readonly>${payload}</textarea>`, [
+        { text: '关闭', class: 'btn btn-secondary', onclick: closeModal },
+        { text: '复制', class: 'btn btn-primary', onclick: () => { navigator.clipboard.writeText(payload); showToast('已复制'); closeModal(); } }
+      ]);
+    }
+
+    function importDeck() {
+      showModal('导入卡组代码', '<textarea id="import-area" placeholder="粘贴卡组 JSON..."></textarea>', [
+        { text: '取消', class: 'btn btn-secondary', onclick: closeModal },
+        { text: '导入', class: 'btn btn-primary', onclick: doImport }
+      ]);
+    }
+
+    function doImport() {
+      const text = document.getElementById('import-area').value.trim();
+      if (!text) return;
+      try {
+        const d = JSON.parse(text);
+        if (!d.main || !d.runes) throw new Error('格式不正确');
+        state.deck = {
+          id: d.id || generateId(),
+          name: d.name || '导入卡组',
+          commander: d.commander || null,
+          main: d.main || [],
+          runes: d.runes || [],
+          updatedAt: Date.now()
+        };
+        document.getElementById('deck-name').value = state.deck.name;
+        updateAll();
+        closeModal();
+        showToast('卡组已导入');
+      } catch (e) {
+        showToast('导入失败：' + e.message);
+      }
+    }
+
+    // ===== Modal =====
+    function showModal(title, bodyHtml, buttons) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').innerHTML = bodyHtml;
+      const footer = document.getElementById('modal-footer');
+      footer.innerHTML = buttons.map(b => `<button class="${b.class}" onclick="(${b.onclick.toString()})()">${b.text}</button>`).join('');
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // ===== Update =====
+    function updateAll() {
+      renderDeckSection();
+      renderValidation();
+      updateStatistics();
+      renderBrowser();
+      localStorage.setItem(CURRENT_DECK_KEY, JSON.stringify(state.deck));
+    }
+
+    function init() {
+      initFilters();
+      // 尝试读取上次编辑的卡组
+      try {
+        const cur = JSON.parse(localStorage.getItem(CURRENT_DECK_KEY) || 'null');
+        if (cur) {
+          state.deck = cur;
+          document.getElementById('deck-name').value = state.deck.name || '';
+          document.getElementById('deck-created').textContent = state.deck.updatedAt ? '上次保存 ' + new Date(state.deck.updatedAt).toLocaleString() : '未保存';
+        }
+      } catch (e) {}
+      updateAll();
+      document.addEventListener('mousemove', (e) => {
+        if (document.getElementById('tooltip').style.display === 'block') positionTooltip(e);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
