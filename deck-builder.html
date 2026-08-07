@@ -972,7 +972,7 @@
         ? `武${card.power} 射${card.range}` : '';
       const isGrid = (section === 'main'); // 主牌库用网格模式
       if (isGrid) {
-        return `<div class="deck-slot">
+        return `<div class="deck-slot" onmouseenter="showTooltip(event,'${card.id}')" onmouseleave="hideTooltip()" onmousemove="positionTooltip(event)">
           <img src="${imgUrl(card)}" alt="${card.name}" onerror="this.style.visibility='hidden'">
           <div class="deck-slot-name">${card.name}</div>
           <div class="deck-slot-qty">
@@ -983,7 +983,7 @@
           </div>
         </div>`;
       }
-      return `<div class="deck-slot">
+      return `<div class="deck-slot" onmouseenter="showTooltip(event,'${card.id}')" onmouseleave="hideTooltip()" onmousemove="positionTooltip(event)">
         <img src="${imgUrl(card)}" alt="${card.name}" onerror="this.style.visibility='hidden'">
         <div class="deck-slot-info">
           <div class="deck-slot-name">${card.name}</div>
