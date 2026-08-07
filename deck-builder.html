@@ -1156,6 +1156,7 @@
       for (const c of cards) {
         if (c.type === 'commander') continue;
         const cost = typeof c.cost === 'number' ? c.cost : 0;
+        if (cost === 0) continue; // 不统计0费
         costMap[cost] = (costMap[cost] || 0) + 1;
         totalCost += cost;
         costCards++;
@@ -1163,7 +1164,7 @@
       const maxCost = Math.max(8, ...Object.keys(costMap).map(Number));
       const labels = [];
       const data = [];
-      for (let i = 0; i <= maxCost; i++) {
+      for (let i = 1; i <= maxCost; i++) { // 从1费开始
         labels.push(i + '');
         data.push(costMap[i] || 0);
       }
